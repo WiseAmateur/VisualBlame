@@ -8,3 +8,4 @@ class Blame():
     self.file_path = path
 
   def blame(self):
+    pass

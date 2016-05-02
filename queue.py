@@ -1,5 +1,7 @@
 from time import sleep
-import thread
+# from blame import Blame
+import threading
+# import pygit2
 
 class Queue():
   def __init__(self):
@@ -17,8 +19,11 @@ class Queue():
     self.executeData()
 
   def executeData(self):
-    thread.start_new_thread(self.test, ())
+    threading.Thread(target=self.test, args=()).start()
 
+  # temporary function to demonstrate workings
   def test(self):
+    # repo = Repository('.git')
+    # blame = Blame(repo, 'main.py')
     sleep(2)
-    print("testin testin")
+    print("test")
