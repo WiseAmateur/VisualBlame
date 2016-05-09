@@ -1,0 +1,73 @@
+#:kivy 1.9.1
+
+<CommitContextView>:
+  rows: 4
+  cols: 1
+  LabelRecolorable:
+    id: id
+    size_hint: (1.0, 0.04)
+    text: 'Select a line to view the last commit'
+    color: (0,0,0,1)
+    bg_color: 0.73, 0.73, 0.73
+
+  LabelRecolorable:
+    id: date
+    size_hint: (1.0, 0.04)
+    text: 'information of it'
+    color: (0,0,0,1)
+    bg_color: 0.73, 0.73, 0.73
+
+  GridLayout:
+    rows: 2
+    cols: 3
+    padding: 0
+    spacing: 0
+    size_hint: (1.0, 0.09)
+
+    LabelRecolorable:
+      text: 'Author:'
+      text_size: self.size
+      halign: 'right'
+      valign: 'middle'
+      color: (0,0,0,1)
+      bg_color: 0.83, 0.83, 0.83
+
+    LabelRecolorable:
+      id: author_name
+      color: (0,0,0,1)
+      bg_color: 0.83, 0.83, 0.83
+
+    LabelRecolorable:
+      id: author_email
+      text_size: self.size
+      halign: 'left'
+      valign: 'middle'
+      color: (0,0,0,1)
+      bg_color: 0.83, 0.83, 0.83
+
+    LabelRecolorable:
+      text: 'Committer:'
+      text_size: self.size
+      halign: 'right'
+      valign: 'middle'
+      color: (0,0,0,1)
+      bg_color: 0.83, 0.83, 0.83
+
+    LabelRecolorable:
+      id: committer_name
+      color: (0,0,0,1)
+      bg_color: 0.83, 0.83, 0.83
+
+    LabelRecolorable:
+      id: committer_email
+      text_size: self.size
+      halign: 'left'
+      valign: 'middle'
+      color: (0,0,0,1)
+      bg_color: 0.83, 0.83, 0.83
+
+  LabelRecolorable:
+    id: message
+    size_hint: (1.0, 0.17)
+    color: (0,0,0,1)
+    bg_color: 0.85, 0.85, 0.85

@@ -1,12 +1,35 @@
+import sys
+import os.path
+import pygit2
+
 from time import sleep
 from scheduler import Scheduler
-from queue import Queue
-from gui import VisualBlame
+from gui.gui import VisualBlame
+from events import EventManager
+
+
+# Function handling the input of the application. The application expects
+# one command line argument containing the file path of the file to open
+# the application with
+def handleArgv():
+  if len(sys.argv) != 2:
+    print "Expecting the path of the file to start with as a command line argument"
+    sys.exit()
+
+  file_path = sys.argv[1]
+
+  if not os.path.isfile(file_path):
+    print "Invalid file path"
+
+  return file_path
+
 
 if __name__ == '__main__':
-  scheduler = Scheduler(Queue(), None)
-  gui = VisualBlame('main.py')
+  file_path = handleArgv()
+  file_path = os.path.abspath(file_path)
+  git_dir = pygit2.discover_repository(file_path)
+  event = EventManager()
+  scheduler = Scheduler(git_dir, event)
+
+  gui = VisualBlame(git_dir, file_path[len(git_dir) - 5:], event)
   gui.run()
-  # while (True):
-    # print ("in main loop")
-    # sleep(1)
