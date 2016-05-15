@@ -120,8 +120,10 @@ class CodeListView(ListView):
       self.adapter.select_list([], False)
 
   def updateListSelection(self, **kwargs):
+    commit_id = kwargs["data"].keys()[0]
     views = []
-    for index in kwargs["data"]:
+    for index in kwargs["data"][commit_id]:
       views.append(self.adapter.get_view(index-1))
 
     self.adapter.select_list(views, False)
+    App.get_running_app().triggerEvent("commit_context", {"commit_id": commit_id})

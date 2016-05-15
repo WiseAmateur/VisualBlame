@@ -1,12 +1,11 @@
 from datetime import tzinfo, timedelta
 from datetime import datetime
-from modulebase import ModuleBase
+from modulebase import GitModuleBase
 
-class CommitContext(ModuleBase):
-  def __init__(self, repo, callback, **kwargs):
-    self.repo = repo
-    self.callback = callback
-    self.commit_id = kwargs["id"]
+class CommitContext(GitModuleBase):
+  def __init__(self, **kwargs):
+    super(CommitContext, self).__init__(**kwargs)
+    self.commit_id = kwargs["commit_id"]
 
   def execute(self):
     commit = self.repo.get(self.commit_id)
@@ -19,7 +18,7 @@ class CommitContext(ModuleBase):
     "committer_email": commit.committer.email, "message": commit.message,
     "date": timestr}
 
-    self.callback("commit_context_result", data)
+    super(CommitContext, self).returnFinalResult(data)
 
 class FixedOffset(tzinfo):
   """Fixed offset in minutes east from UTC. https://media.readthedocs.org/pdf/pygit2/latest/pygit2.pdf page 12"""
