@@ -1,9 +1,0 @@
-Simple version:
-GUI -> Add command to Q (e.g. blame + file_path + lines) -> check if results already in cache ->
-if yes return results, else perform blame -> return results from blame
-
-Real version:
-beforehand: register events (observer pattern)
-GUI -> Add command to Q (e.g. blame + file_path + lines) -> Execute on different thread when ready ->
-check if results already in cache -> if yes fire up blame event with results, else perform blame ->
-fire up blame event with results from blame

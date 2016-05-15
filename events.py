@@ -1,5 +1,3 @@
-
-
 # Class that allows for events to be registered and triggered
 class EventManager():
   def __init__(self):
@@ -13,6 +11,7 @@ class EventManager():
 
   def triggerEvent(self, event, data=None):
     result = {"event": event, "data": data}
+    # TODO try except?
     if event in self.events:
       for function in self.events[event]:
         function(**result)

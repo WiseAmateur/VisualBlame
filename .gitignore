@@ -1,5 +1,3 @@
 *.pyc
-plan
-TODO
-backup*
+ignore/
 VIRTUAL/

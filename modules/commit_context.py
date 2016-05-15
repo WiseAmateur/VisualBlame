@@ -1,8 +1,6 @@
-from __future__ import unicode_literals
 from datetime import tzinfo, timedelta
 from datetime import datetime
 from modulebase import ModuleBase
-import pygit2
 
 class CommitContext(ModuleBase):
   def __init__(self, repo, callback, **kwargs):

@@ -26,10 +26,12 @@ def handleArgv():
 
 if __name__ == '__main__':
   file_path = handleArgv()
-  file_path = os.path.abspath(file_path)
+  file_path_abs = os.path.abspath(file_path)
   git_dir = pygit2.discover_repository(file_path)
+  file_path_rel = file_path_abs[len(git_dir) - 5:]
+
   event = EventManager()
   scheduler = Scheduler(git_dir, event)
 
-  gui = VisualBlame(git_dir, file_path[len(git_dir) - 5:], event)
+  gui = VisualBlame(file_path_abs, file_path_rel, event)
   gui.run()

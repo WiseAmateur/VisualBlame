@@ -53,8 +53,9 @@ class ListItemLabelCode(SelectableView, ButtonBehavior, GridLayout):
 # visually deselects items
 class CustomAdapter(ListAdapter):
   def __init__(self, **kwargs):
+    kwargs["cls"] = ListItemLabelCode
     super(CustomAdapter, self).__init__(**kwargs)
-    self.update_last_selection()
+    self._update_last_selection()
 
   def select_list(self, view_list, extend=True):
     if not extend:
@@ -64,13 +65,13 @@ class CustomAdapter(ListAdapter):
     for view in view_list:
       self.select_item_view(view)
 
-    self.update_last_selection()
+    self._update_last_selection()
 
   def deselect_list(self, view_list):
     for view in view_list:
       self.handle_selection(view, hold_dispatch=True)
 
-  def update_last_selection(self):
+  def _update_last_selection(self):
     self.last_selection = {view.index for view in self.selection}
 
   # Optimalisations/improvements can be made here depending on how the
@@ -85,15 +86,14 @@ class CustomAdapter(ListAdapter):
     # Not a great spot to update this, but have to as the results of the last
     # click are not guaranteed to be done (and thus call select list which updates)
     # before the next click.
-    self.update_last_selection()
+    self._update_last_selection()
     return index
 
 
 class CodeListView(ListView):
-  def initCodeView(self, git_dir, file_path):
-    self.file_path = file_path
-    self.git_dir = git_dir
-    data = self.readFile(self.git_dir[:-5] + self.file_path)
+  def initCodeView(self, file_path_abs, file_path_rel):
+    self.file_path_rel = file_path_rel
+    data = self.readFile(file_path_abs)
 
     max_index_len = len(data)
     for index in range(max_index_len):
@@ -103,8 +103,7 @@ class CodeListView(ListView):
         index_str = " " + index_str
       data[index] = {"index": index_str + "  ", "line": data[index]}
 
-    self.adapter = CustomAdapter(data=data, selection_mode='multiple',
-                              cls=ListItemLabelCode)
+    self.adapter = CustomAdapter(data=data, selection_mode='multiple')
     self.adapter.bind(on_selection_change=self.handleSelectionChange)
     App.get_running_app().registerForEvent("blame_result", self.updateListSelection)
 
@@ -115,7 +114,7 @@ class CodeListView(ListView):
   def handleSelectionChange(self, adapter):
     line = self.adapter.get_clicked_item_index() + 1
     if line:
-      args = {"line": line, "file": self.file_path}
+      args = {"line": line, "file": self.file_path_rel}
       App.get_running_app().triggerEvent("blame", args)
     else:
       self.adapter.select_list([], False)
