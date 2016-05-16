@@ -2,7 +2,7 @@ from modulebase import GitModuleBase
 import pygit2
 
 # Class that gets the blame info from the cache, first filling the cache
-# with the info if it is not there. TODO: receive potential data from scheduler from cache
+# with the info if it is not there.
 class Blame(GitModuleBase):
   def __init__(self, **kwargs):
     super(Blame, self).__init__(**kwargs)
