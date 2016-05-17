@@ -7,7 +7,7 @@ class Diff(GitModuleBase):
     self.commit_id = kwargs["commit_id"]
 
   def execute(self):
-    diff = self.repo.diff(self.commit_id, self.commit_id + "^")
+    diff = self.repo.diff(str(self.commit_id), str(self.commit_id) + "^")
     diff_data = {}
 
     for patch in diff:
@@ -40,9 +40,10 @@ class Diff(GitModuleBase):
         if len(new_hunk["lines"]) > 0:
           diff_data[commit_file_path_rel].append(new_hunk)
 
+    # print diff_data
+
     super(Diff, self).returnFinalResult(diff_data)
 
-    # print diff_data
 
     # for cur_file in diff_data:
       # counter = 1

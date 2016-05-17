@@ -1,5 +1,4 @@
 import unittest
-from gui.codelistview import CustomAdapter
 
 
 class TestCustomAdapter(unittest.TestCase):

@@ -6,6 +6,8 @@ from kivy.lang import Builder
 from kivy.uix.label import Label
 
 from codelistview import CodeListView
+from blamecodelistview import BlameCodeListView
+from diffcodelistview import DiffCodeListView
 from commitcontextview import CommitContextView
 
 
@@ -14,16 +16,17 @@ class LabelRecolorable(Label):
 
 
 class VisualBlame(App):
-  def __init__(self, file_path_abs, file_path_rel, event_manager):
-    self.file_path_rel = file_path_rel
-    self.file_path_abs = file_path_abs
-    self.event_manager = event_manager
+  def __init__(self, **kwargs):
+    self.init_args = kwargs
+    self.event_manager = kwargs["event_manager"]
     super(VisualBlame, self).__init__()
 
   def build(self):
     self.root = Builder.load_file('gui/gui.kv')
 
-    self.root.ids.codelines_list.initCodeView(self.file_path_abs, self.file_path_rel)
+    self.root.ids.blame_codelines_list.initCodeView(**self.init_args)
+    self.root.ids.diff_codelines_list.initCodeView(data=[])
+    self.init_args = None
 
   def registerForEvent(self, event, function):
     self.event_manager.registerForEvent(event, function)

@@ -14,13 +14,20 @@
 GridLayout:
   id: container
   rows: 2
-  cols: 0
+  cols: 2
   padding: 1
   spacing: 0
 
-  CodeListView:
-    id: codelines_list
+  BlameCodeListView:
+    id: blame_codelines_list
     size_hint: (1.0, 0.66)
+
+  DiffCodeListView:
+    id: diff_codelines_list
+    size_hint: (1.0, 0.66)
+
+  CommitContextView:
+    size_hint: (1.0, 0.34)
 
   CommitContextView:
     size_hint: (1.0, 0.34)

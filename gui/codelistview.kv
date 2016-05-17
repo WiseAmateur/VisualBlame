@@ -1,6 +1,6 @@
 #:kivy 1.9.1
 
-<ListItemLabelCode>:
+<CodeListItem>:
   linenum_bgcolor: 0.14, 0.1, 0.05
   selected_bgcolor: 0.25, 0.5, 0.75
   size_hint_y: None
@@ -9,16 +9,12 @@
   font_name: 'data/fonts/RobotoMono-Regular.ttf'
 
 <CodeNumLabel>:
-  size: self.texture_size
-  canvas.before:
-    Color:
-      rgb: 0.5, 0.5, 0.5
-    Rectangle:
-      pos: self.pos
-      size: self.size
+  bgcolor: 0.5, 0.5, 0.5
 
 <CodeLineLabel>:
   halign: 'left'
   valign: 'middle'
-  selected_bgcolor: 0.5, 0.60, 0.25
   text_size: self.size
+
+<BlameCodeLineLabel>:
+  selected_bgcolor: 0.5, 0.60, 0.25

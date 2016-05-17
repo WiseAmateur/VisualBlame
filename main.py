@@ -24,14 +24,21 @@ def handleArgv():
   return file_path
 
 
+def readFile(file_path):
+    with open(file_path) as f:
+      return f.read().splitlines()
+
+
 if __name__ == '__main__':
   file_path = handleArgv()
   file_path_abs = os.path.abspath(file_path)
   git_dir = pygit2.discover_repository(file_path)
   file_path_rel = file_path_abs[len(git_dir) - 5:]
 
-  event = EventManager()
-  scheduler = Scheduler(git_dir, event)
+  event_manager = EventManager()
+  scheduler = Scheduler(git_dir, event_manager)
 
-  gui = VisualBlame(file_path_abs, file_path_rel, event)
+  data = readFile(file_path_abs)
+
+  gui = VisualBlame(data=data, file_path_rel=file_path_rel, event_manager=event_manager)
   gui.run()
