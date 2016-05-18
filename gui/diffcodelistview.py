@@ -1,7 +1,7 @@
 from kivy.adapters.listadapter import ListAdapter
 from kivy.app import App
 
-from codelistview import CodeListView
+from codelistview import CodeScrollView
 
 class DiffAdapter(ListAdapter):
   def __init__(self, **kwargs):
@@ -14,7 +14,7 @@ class DiffAdapter(ListAdapter):
     self.data = data
 
 
-class DiffCodeListView(CodeListView):
+class DiffCodeListView(CodeScrollView):
   color_mapping = {"+": (0, 1, 0), "-": (1, 0, 0), " ": (0, 0, 0)}
   cls_adapter = DiffAdapter
 

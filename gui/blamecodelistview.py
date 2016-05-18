@@ -4,7 +4,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.graphics import Color, Rectangle
 from kivy.app import App
 
-from codelistview import CodeLineLabel, CodeListItem, CodeListView
+from codelistview import CodeLineLabel, CodeListItem, CodeScrollView
 
 class BlameCodeLineLabel(CodeLineLabel):
   def __init__(self, **kwargs):
@@ -79,7 +79,7 @@ class BlameAdapter(ListAdapter):
     return index
 
 
-class BlameCodeListView(CodeListView):
+class BlameCodeListView(CodeScrollView):
   cls_adapter = BlameAdapter
   cls_item = BlameCodeListItem
   selection_mode = "multiple"

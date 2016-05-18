@@ -5,7 +5,7 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.label import Label
 
-from codelistview import CodeListView
+from codelistview import CodeScrollView
 from blamecodelistview import BlameCodeListView
 from diffcodelistview import DiffCodeListView
 from commitcontextview import CommitContextView

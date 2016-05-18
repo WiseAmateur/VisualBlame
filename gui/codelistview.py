@@ -9,23 +9,26 @@ from kivy.graphics import Color, Rectangle, Callback
 from kivy.clock import Clock
 from kivy.app import App
 
+from labelrecolorable import LabelRecolorable
 
-class CodeNumLabel(Label):
+
+class CodeNumLabel(LabelRecolorable):
   pass
 
 
-class CodeLineLabel(Label):
+class CodeLineLabel(LabelRecolorable):
   pass
 
 
 class CodeListItem(BoxLayout):
-  cls_line_label = CodeLineLabel
-  bgcolor = (1, 0, 0)
-
   def __init__(self, **kwargs):
     super(CodeListItem, self).__init__(**kwargs)
     self.ids.linenum_label.text = kwargs["text"]["index"]
     self.ids.line_label.text = kwargs["text"]["line"]
+
+
+class CodeItemContainer(GridLayout):
+  pass
 
 
 class CodeScrollView(ScrollView):
@@ -36,34 +39,6 @@ class CodeScrollView(ScrollView):
 
     for codeline in data:
       codeline_container.add_widget(CodeListItem(text=codeline))
-    # print data
-
-  def _format_line_data(self, data):
-    max_index_len = len(data)
-    max_str_len = len(str(max_index_len))
-
-    for index in range(max_index_len):
-      index_str = str(index+1)
-      # Prepend spaces to every str index that has smaller length than the max index
-      for i in range(len(index_str), max_str_len):
-        index_str = " " + index_str
-      data[index] = {"index": index_str + "  ", "line": data[index]}
-
-    return data
-
-class CodeItemContainer(GridLayout):
-  pass
-
-
-class CodeListView(ListView):
-  cls_adapter = ListAdapter
-  cls_item = CodeListItem
-  selection_mode = "none"
-
-  def initCodeView(self, **kwargs):
-    data = self._format_line_data(kwargs["data"])
-
-    self.adapter = self.cls_adapter(data=data, selection_mode=self.selection_mode, cls=self.cls_item)
 
   def _format_line_data(self, data):
     max_index_len = len(data)
