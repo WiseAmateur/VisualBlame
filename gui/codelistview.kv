@@ -1,7 +1,7 @@
 #:kivy 1.9.1
 
 <CodeScrollView>:
-  CodeItemContainer:
+  GridLayout:
     id: codeline_container
     cols: 1
     size_hint: 1, None
@@ -13,30 +13,25 @@
 
   CodeNumLabel:
     id: linenum_label
+    # Set the width to the text size of the linenum and the height as big as possible
     size_hint: None, 1
-    text_size: None, self.size[1]
     width: self.texture_size[0]
-    valign: 'top'
+    text_size: None, self.size[1]
     text: '0'
+    valign: 'top'
     bg_color: 0.3, 0.3, 0.3
 
   CodeLineLabel:
     id: line_label
+    # Set the height to the line text size and the width as big as possible
     size_hint: 1, None
-    text_size: self.width, None
     height: self.texture_size[1] if self.texture_size[1] > 21 else 21
+    text_size: self.width, None
     text: 'line'
+    halign: 'left'
 
-<CodeLineLabel, CodeNumLabel>:
+<BlameCodeListItem>:
+  selected_bg_color: 0.25, 0.5, 0.75
+
+<CodeLineLabel@LabelRecolorable, CodeNumLabel@LabelRecolorable>:
   font_name: 'data/fonts/RobotoMono-Regular.ttf'
-
-<CodeNumLabel>:
-  bgcolor: 0.5, 0.5, 0.5
-  size_hint: (None, 1)
-
-<CodeLineLabel>:
-  halign: 'left'
-  size_hint: (1, None)
-
-<BlameCodeLineLabel>:
-  selected_bgcolor: 0.5, 0.60, 0.25

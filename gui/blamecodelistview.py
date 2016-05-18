@@ -4,108 +4,90 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.graphics import Color, Rectangle
 from kivy.app import App
 
-from codelistview import CodeLineLabel, CodeListItem, CodeScrollView
+from codelistview import CodeListItem, CodeScrollView
 
-class BlameCodeLineLabel(CodeLineLabel):
+
+class BlameCodeListItem(ButtonBehavior, CodeListItem):
+  is_selected = False
+
   def __init__(self, **kwargs):
-    super(BlameCodeLineLabel, self).__init__(**kwargs)
-    if "selected_bgcolor" in kwargs:
-      self.selected_bgcolor = kwargs["selected_bgcolor"]
-
-  def _draw_selected_bg(self):
-    self.canvas.before.add(Color(*self.selected_bgcolor))
-    self.canvas.before.add(Rectangle(pos=self.pos, size=self.size))
-
-  def select(self):
-    self.canvas.before.clear()
-    self._draw_selected_bg()
-
-  def deselect(self):
-    self.canvas.before.clear()
-
-
-class BlameCodeListItem(SelectableView, ButtonBehavior, CodeListItem):
-  def __init__(self, **kwargs):
-    kwargs["cls_line_label"] = BlameCodeLineLabel
+    self.selection_callback = kwargs["on_press_callback"]
+    self.index = kwargs["index"]
     super(BlameCodeListItem, self).__init__(**kwargs)
 
-  def select(self, *args):
-    self.line_label.select()
-
-  def deselect(self, *args):
-    self.line_label.deselect()
-
-
-# Custom adapter that doesn't fire selection change events when the
-# selection is changed through code instead of a user click and that
-# visually deselects items
-class BlameAdapter(ListAdapter):
-  def __init__(self, **kwargs):
-    if "cls" not in kwargs:
-      kwargs["cls"] = BlameCodeListItem
-    super(BlameAdapter, self).__init__(**kwargs)
-    self._update_last_selection()
-
-  def select_list(self, view_list, extend=True):
-    if not extend:
-      # Deselect list with a copy of the current selection
-      self.deselect_list(list(self.selection))
-
-    for view in view_list:
-      self.select_item_view(view)
-
-    self._update_last_selection()
-
-  def deselect_list(self, view_list):
-    for view in view_list:
-      self.handle_selection(view, hold_dispatch=True)
-
-  def _update_last_selection(self):
-    self.last_selection = {view.index for view in self.selection}
-
-  # Optimalisations/improvements can be made here depending on how the
-  # final app will work. Could give whether the item is selected/deselected
-  def get_clicked_item_index(self):
-    if len(self.last_selection) < len(self.selection):
-      # TODO crashes when spam clicking as the selection changes during the clicks
-      index = next(view.index for view in self.selection if not view.index in self.last_selection)
+  def on_press(self):
+    if not self.is_selected:
+      self.select()
     else:
-      index = -1
+      self.deselect()
 
-    # Not a great spot to update this, but have to as the results of the last
-    # click are not guaranteed to be done (and thus call select list which updates)
-    # before the next click.
-    self._update_last_selection()
-    return index
+    self.selection_callback(self.index, self.is_selected)
+
+  def select(self):
+    self.deselect()
+    line_label = self.ids.line_label
+    line_label.canvas.before.add(Color(*self.selected_bg_color))
+    line_label.canvas.before.add(Rectangle(pos=line_label.pos, size=line_label.size))
+    self.is_selected = True
+
+  def deselect(self):
+    self.ids.line_label.canvas.before.clear()
+    self.is_selected = False
 
 
-class BlameCodeListView(CodeScrollView):
-  cls_adapter = BlameAdapter
-  cls_item = BlameCodeListItem
-  selection_mode = "multiple"
-
+class BlameCodeScrollView(CodeScrollView):
   def initCodeView(self, **kwargs):
     self.file_path_rel = kwargs["file_path_rel"]
-    super(BlameCodeListView, self).initCodeView(**kwargs)
-
-    self.adapter.bind(on_selection_change=self.handleSelectionChange)
     App.get_running_app().registerForEvent("blame_result", self.updateListSelection)
 
-  def handleSelectionChange(self, adapter):
-    line = self.adapter.get_clicked_item_index() + 1
-    if line:
-      args = {"line": line, "file": self.file_path_rel}
+    super(BlameCodeScrollView, self).initCodeView(**kwargs)
+
+    # Get the list items and reverse them so that they are in ascending order again
+    self.items = self.children[0].children[::-1]
+
+  def _insertData(self, data):
+    codeline_container = self.ids.codeline_container
+
+    index = 0
+    for codeline in data:
+      codeline_container.add_widget(BlameCodeListItem(text=codeline, on_press_callback=self.handleSelectionChange,
+                                                      index=index))
+      index += 1
+
+  def handleSelectionChange(self, pressed_index, selected):
+    if (selected):
+      args = {"line": pressed_index + 1, "file": self.file_path_rel}
       App.get_running_app().triggerEvent("blame", args)
     else:
-      self.adapter.select_list([], False)
+      self._deselectItems()
       # TODO use kivy event here and bind the corresponding commit to the event to empty itself
+
+  def _deselectItems(self):
+    for item in self.items:
+      item.deselect()
 
   def updateListSelection(self, **kwargs):
     commit_id = kwargs["data"].keys()[0]
-    views = []
-    for index in kwargs["data"][commit_id]:
-      views.append(self.adapter.get_view(index-1))
 
-    self.adapter.select_list(views, False)
+    indices = []
+    for index in kwargs["data"][commit_id]:
+      indices.append(index-1)
+
+    self._selectItems(indices)
+
     App.get_running_app().triggerEvent("commit_context", {"commit_id": commit_id})
     App.get_running_app().triggerEvent("diff", {"commit_id": commit_id})
+
+  def _selectItems(self, indices):
+    self._deselectItems()
+
+    # TODO check if this is actually error in the blame results.
+    # Make sure that all the to be selected lines are within the file bounds, in the case of deleted lines in the work dir
+    items_len = len(self.items)
+    for i in range(len(indices) - 1, -1, -1):
+      if indices[i] < items_len:
+        indices = indices[:i+1]
+        break
+
+    for index in indices:
+      self.items[index].select()
