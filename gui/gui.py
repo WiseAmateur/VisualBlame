@@ -32,9 +32,17 @@ class VisualBlame(App):
     self.init_args = None
     # TODO use file similar to modules in which the top widget event listeners are?
     self.registerForEvent("diff_result", self.root.ids.diff_files.updateTabPanel)
+    self.registerForEvent("commit_context_result", self.root.ids.blame_commit_context.updateCommitContext)
+    self.registerForEvent("commit_context_result", self.root.ids.diff_commit_context.updateCommitContext)
+
+    self.root.ids.blame_commit_context.head = True
     # TODO use a different method to let different widgets call each other
     self.root.ids.diff_files.update_view = self.root.ids.diff_codelines_list.updateListData
     self.root.ids.diff_files.active_file = file_path_rel
+    self.root.ids.blame_history.active_file = file_path_rel
+    self.root.ids.blame_history.updateTabPanel(data=[file_path_rel])
+    self.triggerEvent("commit_context", {"commit_id": "HEAD"})
+
 
   def registerForEvent(self, event, function):
     self.event_manager.registerForEvent(event, function)

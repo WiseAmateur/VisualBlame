@@ -42,13 +42,13 @@ class TabPanel(StackLayout):
       button.deselect()
 
   def selectButton(self, index):
-    print index, len(self.children)
     if index < len(self.children):
       self.children[index].on_press()
 
 
 class ButtonTabPanel(ScrollView):
   effect_cls = ScrollEffect
+  update_view = None
 
   def __init__(self, **kwargs):
     super(ButtonTabPanel, self).__init__(**kwargs)
@@ -67,5 +67,5 @@ class ButtonTabPanel(ScrollView):
 
 
   def updateList(self, file_name):
-    if file_name in self.data:
+    if self.update_view and file_name in self.data:
       self.update_view(self.data[file_name])
