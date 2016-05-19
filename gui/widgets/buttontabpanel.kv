@@ -1,7 +1,7 @@
 #:kivy 1.9.1
 
 <ButtonTabPanel>:
-  bg_color: 1, 1, 1
+  bg_color: 0.3, 0.3, 0.3
   height: 50
 
   canvas.before:
@@ -22,6 +22,7 @@
   size_hint: (None, None)
   width: 200
   height: 25
-  padding_x: 2
   text_size: (self.size[0], None)
   halign: 'center'
+  selected_background_color: [0.2, 0.2, 0.2, 1]
+  deselected_background_color: [0.6, 0.6, 0.6, 1]

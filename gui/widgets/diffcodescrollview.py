@@ -9,14 +9,13 @@ class DiffCodeScrollView(CodeScrollView):
   # The diff view initially starts with no data
   def initCodeView(self, **kwargs):
     super(DiffCodeScrollView, self).initCodeView(**kwargs)
-    App.get_running_app().registerForEvent("diff_result", self.updateListData)
 
-  def updateListData(self, **kwargs):
+  def updateListData(self, data):
+    # print "in updatelistdata", data
     list_data = []
-    temp_key = kwargs["data"].keys()[0]
     counter = 1
     removed_counter = 0
-    for diff_hunk in kwargs["data"][temp_key]:
+    for diff_hunk in data:
       bgcolor = self.color_mapping[diff_hunk.origin]
       temp_counter = counter
       for line in diff_hunk.lines:
@@ -27,7 +26,8 @@ class DiffCodeScrollView(CodeScrollView):
       else:
         removed_counter = temp_counter
 
-    max_str_len = max(len(list_data[-1]["index_str"]), len(str(removed_counter)))
+    if len(list_data):
+      max_str_len = max(len(list_data[-1]["index_str"]), len(str(removed_counter)))
 
     for item in list_data:
       for i in range(len(item["index_str"]), max_str_len):
