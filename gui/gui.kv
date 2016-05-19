@@ -1,25 +1,34 @@
 #:kivy 1.9.1
-#:include gui/codelistview.kv
-#:include gui/labelrecolorable.kv
-#:include gui/commitcontextview.kv
+#:include gui/widgets/buttontabpanel.kv
+#:include gui/widgets/codescrollview.kv
+#:include gui/widgets/labelrecolorable.kv
+#:include gui/widgets/commitcontextview.kv
 
 GridLayout:
   id: container
-  rows: 2
+  rows: 3
   cols: 2
   padding: 1
   spacing: 0
+
+  ButtonTabPanel:
+    id: blame_history
+    size_hint: (1.0, None)
+
+  ButtonTabPanel:
+    id: diff_files
+    size_hint: (1.0, None)
 
   BlameCodeScrollView:
     id: blame_codelines_list
     size_hint: (1.0, 0.66)
 
-  CodeScrollView:
+  DiffCodeScrollView:
     id: diff_codelines_list
     size_hint: (1.0, 0.66)
 
   CommitContextView:
-    size_hint: (1.0, 0.34)
+    size_hint: (1.0, 0.33)
 
   CommitContextView:
-    size_hint: (1.0, 0.34)
+    size_hint: (1.0, 0.33)

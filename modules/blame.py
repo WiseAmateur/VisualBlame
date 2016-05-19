@@ -31,7 +31,11 @@ class Blame(GitModuleBase):
 
   def _get_blame_lines(self):
     blame_lines = {}
-    blame_obj = self.repo.blame(self.file_path)
+    try:
+      blame_obj = self.repo.blame(self.file_path)
+    except KeyError:
+      print "fatal: blame failed, no such path '" + self.file_path + "' in HEAD"
+      exit(0)
 
     for hunk in blame_obj:
       start_linenum = hunk.final_start_line_number

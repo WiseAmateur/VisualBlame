@@ -13,13 +13,14 @@ from events import EventManager
 # the application with
 def handleArgv():
   if len(sys.argv) != 2:
-    print "Expecting the path of the file to start with as a command line argument"
+    print "fatal: expecting the path of the file to start with as a command line argument"
     sys.exit()
 
   file_path = sys.argv[1]
 
   if not os.path.isfile(file_path):
-    print "Invalid file path"
+    print "fatal: invalid file path"
+    exit(0)
 
   return file_path
 

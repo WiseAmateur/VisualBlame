@@ -5,10 +5,11 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.label import Label
 
-from codelistview import CodeScrollView
-from blamecodelistview import BlameCodeScrollView
-from diffcodelistview import DiffCodeListView
-from commitcontextview import CommitContextView
+from widgets.buttontabpanel import ButtonTabPanel
+from widgets.codescrollview import CodeScrollView
+from widgets.blamecodescrollview import BlameCodeScrollView
+from widgets.diffcodescrollview import DiffCodeScrollView
+from widgets.commitcontextview import CommitContextView
 
 
 class LabelRecolorable(Label):

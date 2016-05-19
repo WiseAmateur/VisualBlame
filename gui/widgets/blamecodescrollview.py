@@ -1,10 +1,8 @@
-from kivy.uix.selectableview import SelectableView
-from kivy.adapters.listadapter import ListAdapter
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.graphics import Color, Rectangle
 from kivy.app import App
 
-from codelistview import CodeListItem, CodeScrollView
+from codescrollview import CodeListItem, CodeScrollView
 
 
 class BlameCodeListItem(ButtonBehavior, CodeListItem):
@@ -50,8 +48,8 @@ class BlameCodeScrollView(CodeScrollView):
 
     index = 0
     for codeline in data:
-      codeline_container.add_widget(BlameCodeListItem(text=codeline, on_press_callback=self.handleSelectionChange,
-                                                      index=index))
+      codeline_container.add_widget(BlameCodeListItem(on_press_callback=self.handleSelectionChange,
+                                                      index=index, **codeline))
       index += 1
 
   def handleSelectionChange(self, pressed_index, selected):

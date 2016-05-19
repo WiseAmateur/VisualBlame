@@ -4,17 +4,16 @@ class EventManager():
     self.events = {}
 
   def registerForEvent(self, event, function):
-    if event in self.events:
+    try:
       self.events[event].append(function)
-    else:
+    except KeyError:
       self.events[event] = [function]
 
+  # Call all functions registered to an event with the given data. This
+  # data could either be input data or result data
   def triggerEvent(self, event, data=None):
     result = {"event": event, "data": data}
-    # TODO try except?
+
     if event in self.events:
       for function in self.events[event]:
         function(**result)
-    else:
-      #exception? return False?
-      pass
