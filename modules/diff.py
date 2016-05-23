@@ -8,14 +8,19 @@ class Diff(GitModuleBase):
     self.commit_id = kwargs["commit_id"]
 
   def execute(self):
-    # TODO add support for the edge case where the commit_id is the first commit
-    diff = self.repo.diff(str(self.commit_id), str(self.commit_id) + "^", context_lines=0)
+    try:
+      diff = self.repo.diff(str(self.commit_id), str(self.commit_id) + "^", context_lines=0)
+    except KeyError:
+      # First commit has no parent, manually get all the lines from that commit
+      super(Diff, self).returnFinalResult(self._getFirstCommitDiffData(self.commit_id))
+      return
+
     diff_data = {}
 
     for commit_file in diff:
       commit_file_path_rel = commit_file.delta.new_file.path
 
-      commit_file_lines = self._get_patch_file_lines(commit_file)
+      commit_file_lines = self._getPatchFileLines(commit_file)
 
       diff_data[commit_file_path_rel] = self._createDiffHunkList(commit_file_lines, commit_file.hunks)
 
@@ -68,7 +73,7 @@ class Diff(GitModuleBase):
 
     return commit_file_hunks
 
-  def _get_patch_file_lines(self, patch):
+  def _getPatchFileLines(self, patch):
     # First try to get the new version of the file, if there is none (in
     # the case of a deleted file) return an empty list instead
     # TODO just like the strange + and - lines being switched thing, it
@@ -87,3 +92,23 @@ class Diff(GitModuleBase):
   def _initHunk(self, hunk_type = " ", lines = []):
     FileDiffHunk = namedtuple('FileDiffHunk', ['origin', 'lines'])
     return FileDiffHunk(hunk_type, lines)
+
+  def _getFirstCommitDiffData(self, first_commit_id):
+    diff_data = {}
+    prepend = ""
+
+    trees = [self.repo.get(str(first_commit_id)).tree]
+
+    while len(trees) > 0:
+      tree = trees.pop(0)
+      for entry in tree:
+        if entry.type == "blob":
+          blob = self.repo.get(str(entry.id))
+          lines = blob.data.splitlines()
+          # TODO change to + if pygit2 result switch gets resolved
+          diff_data[prepend + entry.name] = [self._initHunk("-", lines)]
+        elif entry.type == "tree":
+          prepend += entry.name
+          trees.append(self.repo.get(str(entry.id)))
+
+    return diff_data
