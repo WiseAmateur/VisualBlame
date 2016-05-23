@@ -19,13 +19,6 @@ class Diff(GitModuleBase):
 
       diff_data[commit_file_path_rel] = self._createDiffHunkList(commit_file_lines, commit_file.hunks)
 
-    # for key in diff_data:
-      # print "---"
-      # print key
-      # for hunk in diff_data[key]:
-        # print hunk
-      # print "---"
-
     super(Diff, self).returnFinalResult(diff_data)
 
   # From a list containing the lines of a file and a list of diff hunks of that
@@ -34,23 +27,25 @@ class Diff(GitModuleBase):
   def _createDiffHunkList(self, file_lines, diff_hunks):
     commit_file_hunks = []
 
-    last_lineno = 1
+    last_lineno = 0
     for hunk in diff_hunks:
-      # Either new or old lineno is -1, the other one we need is > 0
       hunk_first_lineno = max(hunk.lines[0].new_lineno, hunk.lines[0].old_lineno)
 
       # Add a neutral line hunk if there are lines between the end of
       # the last hunk and the start of this hunk
       if hunk_first_lineno > last_lineno:
-        commit_file_hunks.append(self._initHunk(" ", file_lines[last_lineno-1:hunk_first_lineno-1]))
+        commit_file_hunks.append(self._initHunk(" ", file_lines[last_lineno:hunk_first_lineno-1]))
+        # Do not want to do this in the case the hunk only contains -?
+        last_lineno = hunk_first_lineno
 
       for line in hunk.lines:
         # Only do something if the line is added or removed (can be < in
-        # the case if the last line is not an enter). If it is an added
+        # the case if the last line has no newline). If it is an added
         # line, also increment the last line number
-        if line.origin == "+":
+        # TODO + and - seems to be switched in pygit2, confirm this
+        if line.origin == "-":
           last_lineno = max(line.new_lineno, line.old_lineno)
-        elif line.origin != "-":
+        elif line.origin != "+":
           continue
 
         line_content = line.content.strip('\n')
@@ -76,7 +71,9 @@ class Diff(GitModuleBase):
   def _get_patch_file_lines(self, patch):
     # First try to get the new version of the file, if there is none (in
     # the case of a deleted file) return an empty list instead
-    commit_file = self.repo.get(patch.delta.new_file.id)
+    # TODO just like the strange + and - lines being switched thing, it
+    # seems as if old_file and new_file are switched.. check with fresh pygit2+libgit2 install
+    commit_file = self.repo.get(patch.delta.old_file.id)
     if commit_file == None:
       return []
 
