@@ -1,11 +1,9 @@
 #:kivy 1.9.1
 
-<CodeScrollView>:
-  GridLayout:
-    id: codeline_container
-    cols: 1
-    size_hint: 1, None
-    height: self.minimum_height
+<CodeContainer>:
+  cols: 1
+  size_hint: 1, None
+  height: self.minimum_height
 
 <CodeListItem>:
   size_hint_y: None
@@ -32,6 +30,7 @@
 
 <BlameCodeListItem>:
   selected_bg_color: 0.25, 0.5, 0.75
+  deselected_bg_color: 0, 0, 0
 
 <CodeLineLabel@LabelRecolorable, CodeNumLabel@LabelRecolorable>:
   font_name: 'data/fonts/RobotoMono-Regular.ttf'

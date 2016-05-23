@@ -10,6 +10,5 @@ class CommitContextView(GridLayout):
   def updateCommitContext(self, **kwargs):
     if (kwargs["data"]["id"] == "HEAD") == self.head:
       for widget_id, text in kwargs["data"].iteritems():
-        print widget_id
         if widget_id in self.ids:
           self.ids[widget_id].text = text

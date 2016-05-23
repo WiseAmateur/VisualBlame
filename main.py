@@ -1,5 +1,6 @@
 import sys
 import os.path
+import logging
 import pygit2
 
 from time import sleep
@@ -13,14 +14,14 @@ from events import EventManager
 # the application with
 def handleArgv():
   if len(sys.argv) != 2:
-    print "fatal: expecting the path of the file to start with as a command line argument"
+    logging.error("Input: Wrong input, expecting path of file as argument")
     sys.exit()
 
   file_path = sys.argv[1]
 
   if not os.path.isfile(file_path):
-    print "fatal: invalid file path"
-    exit(0)
+    logging.error("Input: invalid file path")
+    sys.exit()
 
   return file_path
 

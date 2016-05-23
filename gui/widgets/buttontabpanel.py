@@ -68,4 +68,4 @@ class ButtonTabPanel(ScrollView):
 
   def updateList(self, file_name):
     if self.update_view and file_name in self.data:
-      self.update_view(self.data[file_name])
+      self.update_view(data=self.data[file_name])
