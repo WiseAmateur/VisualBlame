@@ -69,6 +69,6 @@ class VisualBlame(App):
   # ALTHOUGH IT IS ALSO USED FOR FIRST TIME COMMIT CONTEXT, ADD MECHANISM FOR INIT TRIGGERS THEN TOO...
   def trigger_event(self, event, data=None, caller_id=""):
     try:
-      self.event_manager.triggerCallEvent(event, data, caller_id)
+      self.event_manager.trigger_call_event(event, data, caller_id)
     except AttributeError:
       logging.warn("VisualBlame: incorrect event manager set")

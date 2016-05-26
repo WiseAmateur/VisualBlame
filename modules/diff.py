@@ -11,7 +11,7 @@ class Diff(GitModuleBase):
 
   def execute(self):
     try:
-      diff = self.repo.diff(str(self.commit_id), str(self.commit_id) + "^", context_lines=0)
+      diff = self.repo.diff(str(self.commit_id) + "^", str(self.commit_id), context_lines=0)
     except KeyError:
       # First commit has no parent, manually get all the lines from that commit
       super(Diff, self).return_final_result(self._get_first_commit_diff_data(self.commit_id))
@@ -20,7 +20,7 @@ class Diff(GitModuleBase):
     diff_data = {}
 
     for commit_file in diff:
-      commit_file_path_rel = commit_file.delta.new_file.path
+      commit_file_path_rel = commit_file.delta.old_file.path
 
       commit_file_lines = self._get_patch_file_lines(commit_file)
 
@@ -49,10 +49,9 @@ class Diff(GitModuleBase):
         # Only do something if the line is added or removed (can be < in
         # the case if the last line has no newline). If it is an added
         # line, also increment the last line number
-        # TODO + and - seems to be switched in pygit2, confirm this
-        if line.origin == "-":
+        if line.origin == "+":
           last_lineno = max(line.new_lineno, line.old_lineno)
-        elif line.origin != "+":
+        elif line.origin != "-":
           continue
 
         line_content = line.content.strip('\n')
@@ -78,9 +77,7 @@ class Diff(GitModuleBase):
   def _get_patch_file_lines(self, patch):
     # First try to get the new version of the file, if there is none (in
     # the case of a deleted file) return an empty list instead
-    # TODO just like the strange + and - lines being switched thing, it
-    # seems as if old_file and new_file are switched.. check with fresh pygit2+libgit2 install
-    commit_file = self.repo.get(patch.delta.old_file.id)
+    commit_file = self.repo.get(patch.delta.new_file.id)
     if commit_file == None:
       return []
 
@@ -107,8 +104,7 @@ class Diff(GitModuleBase):
         if entry.type == "blob":
           blob = self.repo.get(str(entry.id))
           lines = blob.data.splitlines()
-          # TODO change to + if pygit2 result switch gets resolved
-          diff_data[prepend + entry.name] = [self._init_hunk("-", lines)]
+          diff_data[prepend + entry.name] = [self._init_hunk("+", lines)]
         elif entry.type == "tree":
           prepend += entry.name
           trees.append(self.repo.get(str(entry.id)))

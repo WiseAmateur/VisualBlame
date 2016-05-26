@@ -92,5 +92,5 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
 
     self.item_container.select_items(indices)
 
-    # App.get_running_app().triggerEvent("commit_context", {"commit_id": commit_id})
-    # App.get_running_app().triggerEvent("diff", {"commit_id": commit_id})
+    App.get_running_app().trigger_event("commit_context", {"commit_id": commit_id})
+    App.get_running_app().trigger_event("diff", {"commit_id": commit_id})

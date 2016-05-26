@@ -15,8 +15,7 @@ class DiffCodeListItem(CodeListItem):
 
 
 class DiffCodeScrollView(CodeScrollView):
-  # Colors are switched because the pygit2 module seems to have the + and - lines switched
-  color_mapping = {"-": (0.5, 0.6, 0.25), "+": (0.6, 0.1, 0.1), " ": (0, 0, 0)}
+  color_mapping = {"+": (0.5, 0.6, 0.25), "-": (0.6, 0.1, 0.1), " ": (0, 0, 0)}
   line_item_cls = DiffCodeListItem
 
   def _format_line_data(self, data):
@@ -26,11 +25,11 @@ class DiffCodeScrollView(CodeScrollView):
 
     for diff_hunk in data:
       bg_color = self.color_mapping[diff_hunk.origin]
-      if diff_hunk.origin != "+":
+      if diff_hunk.origin != "-":
         for line in diff_hunk.lines:
           list_data.append(ColoredLine(str(line_num), line, bg_color))
           line_num += 1
-      # Removed lines (the "+" lines confusingly enough) don't get a line number
+      # Removed lines don't get a line number
       else:
         for line in diff_hunk.lines:
           list_data.append(ColoredLine(" ", line, bg_color))
@@ -49,7 +48,7 @@ class DiffCodeScrollView(CodeScrollView):
     items = self.item_container.children
     result = []
     for item in items[::-1]:
-      if item.ids.line_label.bg_color != self.color_mapping["+"]:
+      if item.ids.line_label.bg_color != self.color_mapping["-"]:
         result.append(item.ids.line_label.text)
 
     return result
