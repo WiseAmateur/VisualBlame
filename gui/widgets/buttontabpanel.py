@@ -1,9 +1,13 @@
+from collections import namedtuple
+
 from kivy.uix.stacklayout import StackLayout
 from kivy.effects.scroll import ScrollEffect
 from kivy.uix.scrollview import ScrollView
 from kivy.properties import StringProperty
 from kivy.uix.button import Button
 from kivy.app import App
+
+from gui.eventwidget import EventWidget
 
 
 class TabButton(Button):
@@ -37,6 +41,9 @@ class TabPanel(StackLayout):
     for name in button_names:
       self.add_widget(TabButton(text=name))
 
+  def removeButtons(self):
+    self.children = []
+
   def deselectButtons(self):
     for button in self.children:
       button.deselect()
@@ -46,17 +53,17 @@ class TabPanel(StackLayout):
       self.children[index].on_press()
 
 
-class ButtonTabPanel(ScrollView):
+class ButtonTabPanel(ScrollView, EventWidget):
   effect_cls = ScrollEffect
-  update_view = None
+  view_to_update = None
 
   def __init__(self, **kwargs):
     super(ButtonTabPanel, self).__init__(**kwargs)
 
-  def updateTabPanel(self, **kwargs):
+  def receive_event_result(self, **kwargs):
     # TODO find another way to do this, this data is most likely also in the cache..
     self.data = kwargs["data"]
-    # print self.update_view
+    # print self.view_to_update
     file_names = [file_name for file_name in kwargs["data"]]
 
     self.ids.button_container.addButtons(file_names)
@@ -65,7 +72,19 @@ class ButtonTabPanel(ScrollView):
     except ValueError:
       pass
 
-
   def updateList(self, file_name):
-    if self.update_view and file_name in self.data:
-      self.update_view(data=self.data[file_name])
+    if self.view_to_update and file_name in self.data:
+      self.view_to_update.initCodeView(data=self.data[file_name])
+      self.diff_active_file = file_name
+
+  def getData(self):
+    BlameArgs = namedtuple("BlameArgs", ["file_path_rel", "newest_commit", "data"])
+    file_name = self.diff_active_file
+    newest_commit = self.commit_view.getCommitId()
+    lines = self.view_to_update.getLines()
+
+    self.ids.button_container.removeButtons()
+    self.view_to_update._removeAllLines()
+    self.commit_view.emptyCommitContext()
+
+    return BlameArgs(file_name, newest_commit, lines)

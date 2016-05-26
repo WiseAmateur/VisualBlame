@@ -11,12 +11,17 @@ from widgets.diffcodescrollview import DiffCodeScrollView
 from widgets.commitcontextview import CommitContextView
 from widgets.buttontabpanel import ButtonTabPanel
 from widgets.codescrollview import CodeScrollView
+from widgets.switchbutton import SwitchButton
 
 
 class VisualBlame(App):
-  def __init__(self, event_manager = None, **kwargs):
+  def __init__(self, event_manager=None, view_event_listeners=[],
+               view_event_triggers=[], **kwargs):
     self.init_args = kwargs
     self.event_manager = event_manager
+    # Can't register the events here, as the widgets are not built yet
+    self.view_event_listeners = view_event_listeners
+    self.view_event_triggers = view_event_triggers
     super(VisualBlame, self).__init__()
 
   def build(self):
@@ -27,28 +32,43 @@ class VisualBlame(App):
     self.root.ids.blame_codelines_list.initCodeView(**self.init_args)
     self.root.ids.diff_codelines_list.initCodeView(data=[])
     self.init_args = None
-    # TODO use file similar to modules in which the top widget event listeners are?
-    self.registerForEvent("diff_result", self.root.ids.diff_files.updateTabPanel)
-    self.registerForEvent("commit_context_result", self.root.ids.blame_commit_context.updateCommitContext)
-    self.registerForEvent("commit_context_result", self.root.ids.diff_commit_context.updateCommitContext)
+
+    self._registerResultEvents()
+    self._registerCallEvents()
 
     self.root.ids.blame_commit_context.head = True
     # TODO use a different method to let different widgets call each other
-    self.root.ids.diff_files.update_view = self.root.ids.diff_codelines_list.initCodeView
+    self.root.ids.diff_files.view_to_update = self.root.ids.diff_codelines_list
     self.root.ids.diff_files.active_file = file_path_rel
     self.root.ids.blame_history.active_file = file_path_rel
-    self.root.ids.blame_history.updateTabPanel(data=[file_path_rel])
+    self.root.ids.blame_history.receive_event_result(data=[file_path_rel])
     self.triggerEvent("commit_context", {"commit_id": "HEAD"})
 
+    self.root.ids.diff_files.commit_view = self.root.ids.diff_commit_context
+    self.root.ids.diff_to_blame.setScrollViews(self.root.ids.diff_files,
+                                               self.root.ids.blame_codelines_list)
 
-  def registerForEvent(self, event, function):
+
+  def _registerResultEvents(self):
     try:
-      self.event_manager.registerForEvent(event, function)
+      for view_id in self.view_event_listeners:
+        self.event_manager.registerForResultEvent(self.view_event_listeners[view_id],
+                                                  self.root.ids[view_id].receive_event_result)
     except AttributeError:
-      logging.warn("VisualBlame: incorrect event manager set")
+      logging.warn("VisualBlame: incorrect event manager set, unable to register result events")
 
-  def triggerEvent(self, event, data=None):
+  def _registerCallEvents(self):
     try:
-      self.event_manager.triggerEvent(event, data)
+      for view_id in self.view_event_triggers:
+        self.root.ids[view_id].init_event_call(self.event_manager.triggerCallEvent,
+                                               view_id, self.view_event_triggers[view_id])
+    except AttributeError:
+      logging.warn("VisualBlame: incorrect event manager set, unable to register call events")
+
+  # TODO ADD MECHANISM FOR CHAIN TRIGGERS SO THAT THIS FUNCTION CAN BE REMOVED
+  # ALTHOUGH IT IS ALSO USED FOR FIRST TIME COMMIT CONTEXT, ADD MECHANISM FOR INIT TRIGGERS THEN TOO...
+  def triggerEvent(self, event, data=None, caller_id=""):
+    try:
+      self.event_manager.triggerCallEvent(event, data, caller_id)
     except AttributeError:
       logging.warn("VisualBlame: incorrect event manager set")

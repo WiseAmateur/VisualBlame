@@ -9,6 +9,8 @@ from codescrollview import CodeScrollView, CodeListItem
 class DiffCodeListItem(CodeListItem):
   def __init__(self, bg_color=(0, 0, 0), **kwargs):
     super(DiffCodeListItem, self).__init__(**kwargs)
+    if bg_color != (0, 0, 0):
+      self.ids.linenum_label.bg_color = bg_color
     self.ids.line_label.bg_color = bg_color
 
 
@@ -42,3 +44,12 @@ class DiffCodeScrollView(CodeScrollView):
       list_data[i] = line._replace(str_index=final_str_index)
 
     return list_data
+
+  def getLines(self):
+    items = self.item_container.children
+    result = []
+    for item in items[::-1]:
+      if item.ids.line_label.bg_color != self.color_mapping["+"]:
+        result.append(item.ids.line_label.text)
+
+    return result

@@ -2,22 +2,25 @@ import sys
 import os.path
 import logging
 import pygit2
+import argparse
 
-from time import sleep
 from scheduler import Scheduler
 from gui.gui import VisualBlame
 from events import EventManager
+
+from modules.modules import module_events
+from gui.views import view_event_listeners, view_event_triggers
 
 
 # Function handling the input of the application. The application expects
 # one command line argument containing the file path of the file to open
 # the application with
 def handleArgv():
-  if len(sys.argv) != 2:
-    logging.error("Input: Wrong input, expecting path of file as argument")
-    sys.exit()
+  parser = argparse.ArgumentParser()
+  parser.add_argument("file_path", type=str, help="Path to the file to start the application with")
 
-  file_path = sys.argv[1]
+  args = parser.parse_args()
+  file_path = args.file_path
 
   if not os.path.isfile(file_path):
     logging.error("Input: invalid file path")
@@ -27,8 +30,8 @@ def handleArgv():
 
 
 def readFile(file_path):
-    with open(file_path) as f:
-      return f.read().splitlines()
+  with open(file_path) as f:
+    return f.read().splitlines()
 
 
 if __name__ == '__main__':
@@ -38,9 +41,10 @@ if __name__ == '__main__':
   file_path_rel = file_path_abs[len(git_dir) - 5:]
 
   event_manager = EventManager()
-  scheduler = Scheduler(git_dir, event_manager)
+  scheduler = Scheduler(git_dir, event_manager, module_events)
 
   data = readFile(file_path_abs)
 
-  gui = VisualBlame(data=data, file_path_rel=file_path_rel, event_manager=event_manager)
+  gui = VisualBlame(data=data, file_path_rel=file_path_rel, event_manager=event_manager,
+                    view_event_listeners=view_event_listeners, view_event_triggers=view_event_triggers)
   gui.run()

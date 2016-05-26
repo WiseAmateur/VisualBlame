@@ -5,10 +5,14 @@ class GitModuleBase(object):
     self._event_id = kwargs["event_id"]
     self.repo = kwargs["repo"]
     self.intermediate_data = kwargs["intermediate_data"]
+    self._caller = kwargs["caller"]
+
+  def execute(self):
+    pass
 
   # Return the intermediate result without triggering an event (serves for caching purposes)
   def returnIntermediateResult(self, data):
-    self._callback(self._event, self._event + "_result", data, False)
+    self._callback(self._caller, self._event_id, self._event, data, False)
 
   def returnFinalResult(self, data):
-    self._callback(self._event_id, self._event + "_result", data)
+    self._callback(self._caller, self._event_id, self._event, data)
