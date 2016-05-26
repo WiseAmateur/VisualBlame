@@ -5,17 +5,16 @@ import pygit2
 import argparse
 
 from scheduler import Scheduler
-from gui.gui import VisualBlame
+from gui.root import VisualBlame
 from events import EventManager
-
-from modules.modules import module_events
-from gui.views import view_event_listeners, view_event_triggers
+from modules.module_event_config import module_events
+from gui.widget_event_config import widget_event_listeners, widget_event_triggers
 
 
 # Function handling the input of the application. The application expects
 # one command line argument containing the file path of the file to open
 # the application with
-def handleArgv():
+def handle_argv():
   parser = argparse.ArgumentParser()
   parser.add_argument("file_path", type=str, help="Path to the file to start the application with")
 
@@ -29,13 +28,13 @@ def handleArgv():
   return file_path
 
 
-def readFile(file_path):
+def read_file(file_path):
   with open(file_path) as f:
     return f.read().splitlines()
 
 
 if __name__ == '__main__':
-  file_path = handleArgv()
+  file_path = handle_argv()
   file_path_abs = os.path.abspath(file_path)
   git_dir = pygit2.discover_repository(file_path)
   file_path_rel = file_path_abs[len(git_dir) - 5:]
@@ -43,8 +42,8 @@ if __name__ == '__main__':
   event_manager = EventManager()
   scheduler = Scheduler(git_dir, event_manager, module_events)
 
-  data = readFile(file_path_abs)
+  data = read_file(file_path_abs)
 
   gui = VisualBlame(data=data, file_path_rel=file_path_rel, event_manager=event_manager,
-                    view_event_listeners=view_event_listeners, view_event_triggers=view_event_triggers)
+                    widget_event_listeners=widget_event_listeners, widget_event_triggers=widget_event_triggers)
   gui.run()

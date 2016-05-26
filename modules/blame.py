@@ -1,7 +1,9 @@
-from modulebase import GitModuleBase
 import logging
 import pygit2
 import sys
+
+from modules.modulebase import GitModuleBase
+
 
 # Class that gets the blame info from the cache, first filling the cache
 # with the info if it is not there.
@@ -16,8 +18,8 @@ class Blame(GitModuleBase):
     if self.intermediate_data:
       blame_lines = self.intermediate_data
     else:
-      blame_lines = self._getBlameLines()
-      super(Blame, self).returnIntermediateResult(blame_lines)
+      blame_lines = self._get_blame_lines()
+      super(Blame, self).return_intermediate_result(blame_lines)
 
     if self.line > -1:
       # TODO find out how the lines work when there are not committed lines in the file. Pref behavior when selecting uncommitted line is select all uncommitted lines
@@ -27,9 +29,9 @@ class Blame(GitModuleBase):
         if self.line >= blame_lines[commit_id][0] and self.line <= blame_lines[commit_id][-1] and self.line in blame_lines[commit_id]:
           line_commit_id = commit_id
 
-      super(Blame, self).returnFinalResult({line_commit_id: blame_lines[line_commit_id]})
+      super(Blame, self).return_final_result({line_commit_id: blame_lines[line_commit_id]})
 
-  def _getBlameLines(self):
+  def _get_blame_lines(self):
     blame_lines = {}
     try:
       newest_commit = str(self.newest_commit)

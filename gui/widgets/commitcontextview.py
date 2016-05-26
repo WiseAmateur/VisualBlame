@@ -15,9 +15,9 @@ class CommitContextView(GridLayout, EventWidget):
         if widget_id in self.ids:
           self.ids[widget_id].text = text
 
-  def getCommitId(self):
+  def get_commit_id(self):
     return self.ids["id"].text
 
-  def emptyCommitContext(self):
+  def empty_commit_context(self):
     for widget_id in self.ids:
       self.ids[widget_id].text = ""

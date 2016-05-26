@@ -1,6 +1,8 @@
-from modulebase import GitModuleBase
 from collections import namedtuple
 import pygit2
+
+from modules.modulebase import GitModuleBase
+
 
 class Log(GitModuleBase):
   def __init__(self, **kwargs):
@@ -37,4 +39,4 @@ class Log(GitModuleBase):
     # TODO IN COMMIT FUNCTIONALITY, ALLOW FOR MULTIPLE COMMIT INFO RETRIEVES AT ONCE (LIST INPUT OF IDS) SO THAT LESS THREADS ARE NEEDED IN CASES OF LOG COMMIT DETAILS.
     # TODO instead of amount, do blame commit + 1 before and 1 after, and do diff commit + 1 before and 1 after. ( with something like ... in between if there is a gap which is likely)
 
-    super(Log, self).returnFinalResult(log_data)
+    super(Log, self).return_final_result(log_data)

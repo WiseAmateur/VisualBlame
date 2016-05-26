@@ -3,7 +3,7 @@ from collections import namedtuple
 from kivy.adapters.listadapter import ListAdapter
 from kivy.app import App
 
-from codescrollview import CodeScrollView, CodeListItem
+from gui.widgets.codescrollview import CodeScrollView, CodeListItem
 
 
 class DiffCodeListItem(CodeListItem):
@@ -19,7 +19,7 @@ class DiffCodeScrollView(CodeScrollView):
   color_mapping = {"-": (0.5, 0.6, 0.25), "+": (0.6, 0.1, 0.1), " ": (0, 0, 0)}
   line_item_cls = DiffCodeListItem
 
-  def _formatLineData(self, data):
+  def _format_line_data(self, data):
     ColoredLine = namedtuple('ColoredLine', ['str_index', 'line', 'bg_color'])
     list_data = []
     line_num = 1
@@ -45,7 +45,7 @@ class DiffCodeScrollView(CodeScrollView):
 
     return list_data
 
-  def getLines(self):
+  def get_lines(self):
     items = self.item_container.children
     result = []
     for item in items[::-1]:

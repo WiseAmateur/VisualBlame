@@ -1,6 +1,8 @@
-from modulebase import GitModuleBase
 from collections import namedtuple
 import pygit2
+
+from modules.modulebase import GitModuleBase
+
 
 class Diff(GitModuleBase):
   def __init__(self, **kwargs):
@@ -12,7 +14,7 @@ class Diff(GitModuleBase):
       diff = self.repo.diff(str(self.commit_id), str(self.commit_id) + "^", context_lines=0)
     except KeyError:
       # First commit has no parent, manually get all the lines from that commit
-      super(Diff, self).returnFinalResult(self._getFirstCommitDiffData(self.commit_id))
+      super(Diff, self).return_final_result(self._get_first_commit_diff_data(self.commit_id))
       return
 
     diff_data = {}
@@ -20,16 +22,16 @@ class Diff(GitModuleBase):
     for commit_file in diff:
       commit_file_path_rel = commit_file.delta.new_file.path
 
-      commit_file_lines = self._getPatchFileLines(commit_file)
+      commit_file_lines = self._get_patch_file_lines(commit_file)
 
-      diff_data[commit_file_path_rel] = self._createDiffHunkList(commit_file_lines, commit_file.hunks)
+      diff_data[commit_file_path_rel] = self._create_diff_hunk_list(commit_file_lines, commit_file.hunks)
 
-    super(Diff, self).returnFinalResult(diff_data)
+    super(Diff, self).return_final_result(diff_data)
 
   # From a list containing the lines of a file and a list of diff hunks of that
   # file, create a new sorted list with hunks containing only neutral,
   # added or removed lines
-  def _createDiffHunkList(self, file_lines, diff_hunks):
+  def _create_diff_hunk_list(self, file_lines, diff_hunks):
     commit_file_hunks = []
 
     last_lineno = 0
@@ -39,7 +41,7 @@ class Diff(GitModuleBase):
       # Add a neutral line hunk if there are lines between the end of
       # the last hunk and the start of this hunk
       if hunk_first_lineno > last_lineno:
-        commit_file_hunks.append(self._initHunk(" ", file_lines[last_lineno:hunk_first_lineno-1]))
+        commit_file_hunks.append(self._init_hunk(" ", file_lines[last_lineno:hunk_first_lineno-1]))
         # Do not want to do this in the case the hunk only contains -?
         last_lineno = hunk_first_lineno
 
@@ -61,19 +63,19 @@ class Diff(GitModuleBase):
           if commit_file_hunks[-1].origin == line.origin:
             commit_file_hunks[-1].lines.append(line_content)
           else:
-            commit_file_hunks.append(self._initHunk(line.origin, [line_content]))
+            commit_file_hunks.append(self._init_hunk(line.origin, [line_content]))
         except IndexError:
           # In the case the line is the first, there won't be a hunk in the
           # results yet, thus create it here
-          commit_file_hunks.append(self._initHunk(line.origin, [line_content]))
+          commit_file_hunks.append(self._init_hunk(line.origin, [line_content]))
 
     # If there are lines in the file after the last hunk, add them here
     if last_lineno < len(file_lines):
-      commit_file_hunks.append(self._initHunk(" ", file_lines[last_lineno:len(file_lines)]))
+      commit_file_hunks.append(self._init_hunk(" ", file_lines[last_lineno:len(file_lines)]))
 
     return commit_file_hunks
 
-  def _getPatchFileLines(self, patch):
+  def _get_patch_file_lines(self, patch):
     # First try to get the new version of the file, if there is none (in
     # the case of a deleted file) return an empty list instead
     # TODO just like the strange + and - lines being switched thing, it
@@ -89,11 +91,11 @@ class Diff(GitModuleBase):
 
     return commit_file_lines
 
-  def _initHunk(self, hunk_type = " ", lines = []):
+  def _init_hunk(self, hunk_type = " ", lines = []):
     FileDiffHunk = namedtuple('FileDiffHunk', ['origin', 'lines'])
     return FileDiffHunk(hunk_type, lines)
 
-  def _getFirstCommitDiffData(self, first_commit_id):
+  def _get_first_commit_diff_data(self, first_commit_id):
     diff_data = {}
     prepend = ""
 
@@ -106,7 +108,7 @@ class Diff(GitModuleBase):
           blob = self.repo.get(str(entry.id))
           lines = blob.data.splitlines()
           # TODO change to + if pygit2 result switch gets resolved
-          diff_data[prepend + entry.name] = [self._initHunk("-", lines)]
+          diff_data[prepend + entry.name] = [self._init_hunk("-", lines)]
         elif entry.type == "tree":
           prepend += entry.name
           trees.append(self.repo.get(str(entry.id)))

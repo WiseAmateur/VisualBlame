@@ -1,6 +1,7 @@
-from cache import Cache
 import threading
 import pygit2
+
+from cache import Cache
 
 # TODO implement keeping track of active thread and implement queue (need to be thought out more)
 # Handle module requests
@@ -12,9 +13,9 @@ class Scheduler():
     self.cache = Cache()
 
     for event in self.events:
-      self.event_manager.registerForCallEvent(event, self.callGitModule)
+      self.event_manager.register_for_call_event(event, self.call_git_module)
 
-  def callGitModule(self, **kwargs):
+  def call_git_module(self, **kwargs):
     event = kwargs["event"]
     args = kwargs["args"]
     caller = kwargs["caller"]
@@ -26,7 +27,7 @@ class Scheduler():
     # If the result of the command is not yet in the cache, compute it
     if not self.cache.get(event_id):
       args["intermediate_data"] = None#self.cache.get(event)
-      args["callback"] = self.moduleCallback
+      args["callback"] = self.module_callback
       args["repo"] = self.repo
       args["event"] = event
       args["event_id"] = event_id
@@ -39,12 +40,11 @@ class Scheduler():
       # except:
         # pass
     else:
-      self.event_manager.triggerResultEvent(event, self.cache.get(event_id), caller)
+      self.event_manager.trigger_result_event(event, self.cache.get(event_id), caller)
 
-  def moduleCallback(self, caller, cache_key, result_event, result_data, is_final_result=True):
+  def module_callback(self, caller, cache_key, result_event, result_data, is_final_result=True):
     self.cache.store(cache_key, result_data)
 
-
     if is_final_result:
-      self.event_manager.triggerResultEvent(result_event, result_data, caller)
+      self.event_manager.trigger_result_event(result_event, result_data, caller)
       # TODO Check if the active event is a dict, if it is fire up new events after returning results.

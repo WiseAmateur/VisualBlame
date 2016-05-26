@@ -11,8 +11,8 @@ class GitModuleBase(object):
     pass
 
   # Return the intermediate result without triggering an event (serves for caching purposes)
-  def returnIntermediateResult(self, data):
+  def return_intermediate_result(self, data):
     self._callback(self._caller, self._event_id, self._event, data, False)
 
-  def returnFinalResult(self, data):
+  def return_final_result(self, data):
     self._callback(self._caller, self._event_id, self._event, data)

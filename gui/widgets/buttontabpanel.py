@@ -20,9 +20,9 @@ class TabButton(Button):
 
   def on_press(self):
     if not self.is_selected:
-      self.parent.deselectButtons()
+      self.parent.deselect_buttons()
       self.select()
-      self.parent.parent.updateList(self.text)
+      self.parent.parent.update_list(self.text)
 
     # self.selection_callback(self.index, self.is_selected)
 
@@ -36,19 +36,19 @@ class TabButton(Button):
 
 
 class TabPanel(StackLayout):
-  def addButtons(self, button_names):
+  def add_buttons(self, button_names):
     self.children = []
     for name in button_names:
       self.add_widget(TabButton(text=name))
 
-  def removeButtons(self):
+  def remove_buttons(self):
     self.children = []
 
-  def deselectButtons(self):
+  def deselect_buttons(self):
     for button in self.children:
       button.deselect()
 
-  def selectButton(self, index):
+  def select_button(self, index):
     if index < len(self.children):
       self.children[index].on_press()
 
@@ -66,24 +66,24 @@ class ButtonTabPanel(ScrollView, EventWidget):
     # print self.view_to_update
     file_names = [file_name for file_name in kwargs["data"]]
 
-    self.ids.button_container.addButtons(file_names)
+    self.ids.button_container.add_buttons(file_names)
     try:
-      self.ids.button_container.selectButton(file_names[::-1].index(self.active_file))
+      self.ids.button_container.select_button(file_names[::-1].index(self.active_file))
     except ValueError:
       pass
 
-  def updateList(self, file_name):
+  def update_list(self, file_name):
     if self.view_to_update and file_name in self.data:
-      self.view_to_update.initCodeView(data=self.data[file_name])
+      self.view_to_update.init_code_view(data=self.data[file_name])
       self.diff_active_file = file_name
 
-  def getData(self):
+  def get_data(self):
     BlameArgs = namedtuple("BlameArgs", ["file_path_rel", "newest_commit", "data"])
     file_name = self.diff_active_file
     newest_commit = self.commit_view.getCommitId()
-    lines = self.view_to_update.getLines()
+    lines = self.view_to_update.get_lines()
 
-    self.ids.button_container.removeButtons()
+    self.ids.button_container.remove_buttons()
     self.view_to_update._removeAllLines()
     self.commit_view.emptyCommitContext()
 
