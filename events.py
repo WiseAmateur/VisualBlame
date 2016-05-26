@@ -1,50 +1,76 @@
-# from collections import namedtuple
+from collections import namedtuple
 import logging
+
+
+# Result namedtuple, making sure the callers are in a list and optional
+class ResultConfig(namedtuple('ResultConfig', 'event callers')):
+  def __new__(cls, event, callers=[""]):
+    if type(callers) is not list:
+      callers = [callers]
+
+    return super(ResultConfig, cls).__new__(cls, event, callers)
+
+
+# Call namedtuple, making sure the events are in a dict
+class CallConfig(namedtuple('CallConfig', 'events caller result_args')):
+  def __new__(cls, events, caller, result_args=""):
+    if isinstance(events, basestring):
+      events = {events: []}
+
+    return super(CallConfig, cls).__new__(cls, events, caller, result_args)
+
 
 # Class that allows for events to be registered and triggered
 class EventManager():
   def __init__(self):
-    self.events = {}
+    self._events = {}
+    self.active_call_config = None
     self.result_append = "_result"
 
-  def register_for_result_event(self, event_config, function):
-    # processed_config = self._processConfig(event_config)
-    try:
-      event = event_config["caller"] + event_config["event"] + self.result_append
-    except KeyError:
-      logging.warn("Events: register event config is missing a parameter")
-      return
+  def register_for_result_event(self, result_config, function):
+    # Assumes the result config is valid
+    event = result_config.event + self.result_append
 
-    self._register_event(event, function)
+    for caller in result_config.callers:
+      self._register_event(caller + event, function)
 
   def register_for_call_event(self, event, function):
     self._register_event(event, function)
 
   def _register_event(self, event, function):
     try:
-      self.events[event].append(function)
+      self._events[event].append(function)
     except KeyError:
-      self.events[event] = [function]
+      self._events[event] = [function]
 
-  # def _processConfig(self, config):
-    # EventConfig = namedtuple("EventConfig", ["event"])
 
-  def trigger_call_event(self, event, args, caller):
-    args = {"event": event, "args": args, "caller": caller}
-    self._trigger_event(event, args)
+  def trigger_call_event(self, call_config, args):
+    self.active_call_config = call_config
 
-  def trigger_result_event(self, event, data, caller):
+    # Assumes the call config is valid
+    self._trigger_event(call_config.events.keys()[0], call_config, args)
+
+  def trigger_result_event(self, call_config, data):
     result = {"data": data}
 
-    event = event + self.result_append
-    self._trigger_event(event, result)
+    orig_event = call_config.events.keys()[0]
 
-    event = caller + event
-    self._trigger_event(event, result)
+    event = call_config.caller + orig_event + self.result_append
+    self._trigger_event(event, call_config, result)
 
-  def _trigger_event(self, event, data):
+    # Trigger the additional events with the input of this result
+    if call_config == self.active_call_config:
+      for event in call_config.events[orig_event]:
+        key = event.keys()[0]
+        self._trigger_event(key, call_config._replace(events=event),
+                            {call_config.result_args: data[call_config.result_args]})
+
+  def _trigger_event(self, event, call_config, data):
     try:
-      for function in self.events[event]:
-        function(**data)
+      listener_functions = self._events[event]
     except KeyError:
       logging.warn("Events: event '" + event + "' has no listeners")
+      return
+
+    for function in listener_functions:
+      function(config=call_config, event=event, **data)

@@ -1,4 +1,3 @@
-import logging
 import kivy
 kivy.require('1.9.1')
 
@@ -42,33 +41,21 @@ class VisualBlame(App):
     self.root.ids.diff_files.active_file = file_path_rel
     self.root.ids.blame_history.active_file = file_path_rel
     self.root.ids.blame_history.receive_event_result(data=[file_path_rel])
-    self.trigger_event("commit_context", {"commit_id": "HEAD"})
+    # TODO make this possible again
+    # self.trigger_event("commit_context", {"commit_id": "HEAD"})
 
     self.root.ids.diff_files.commit_view = self.root.ids.diff_commit_context
     self.root.ids.diff_to_blame.set_scroll_views(self.root.ids.diff_files,
                                                self.root.ids.blame_codelines_list)
 
-
+  # The register functions assume the event manager is set correctly
+  # and the widget_ids are correct
   def _register_result_events(self):
-    try:
-      for view_id in self.widget_event_listeners:
-        self.event_manager.register_for_result_event(self.widget_event_listeners[view_id],
-                                                  self.root.ids[view_id].receive_event_result)
-    except AttributeError:
-      logging.warn("VisualBlame: incorrect event manager set, unable to register result events")
+    for widget_id in self.widget_event_listeners:
+      self.event_manager.register_for_result_event(self.widget_event_listeners[widget_id],
+                                                   self.root.ids[widget_id].receive_event_result)
 
   def _register_call_events(self):
-    try:
-      for view_id in self.widget_event_triggers:
-        self.root.ids[view_id].init_event_call(self.event_manager.trigger_call_event,
-                                               view_id, self.widget_event_triggers[view_id])
-    except AttributeError:
-      logging.warn("VisualBlame: incorrect event manager set, unable to register call events")
-
-  # TODO ADD MECHANISM FOR CHAIN TRIGGERS SO THAT THIS FUNCTION CAN BE REMOVED
-  # ALTHOUGH IT IS ALSO USED FOR FIRST TIME COMMIT CONTEXT, ADD MECHANISM FOR INIT TRIGGERS THEN TOO...
-  def trigger_event(self, event, data=None, caller_id=""):
-    try:
-      self.event_manager.trigger_call_event(event, data, caller_id)
-    except AttributeError:
-      logging.warn("VisualBlame: incorrect event manager set")
+    for widget_id in self.widget_event_triggers:
+      self.root.ids[widget_id].init_event_call(self.widget_event_triggers[widget_id],
+                                             self.event_manager.trigger_call_event)

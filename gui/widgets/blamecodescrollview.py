@@ -1,5 +1,3 @@
-import logging
-
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.graphics import Color, Rectangle
 from kivy.app import App
@@ -11,7 +9,7 @@ from gui.eventwidget import EventWidget
 class BlameCodeListItem(ButtonBehavior, CodeListItem):
   is_selected = False
 
-  def __init__(self, callback=None, index=-1, **kwargs):
+  def __init__(self, callback, index=-1, **kwargs):
     self.select_callback = callback
     self.index = index
     super(BlameCodeListItem, self).__init__(**kwargs)
@@ -22,10 +20,7 @@ class BlameCodeListItem(ButtonBehavior, CodeListItem):
     else:
       self.deselect()
 
-    try:
-      self.select_callback(self.index, self.is_selected)
-    except TypeError:
-      logging.warn("VisualBlame: no line select callback function set")
+    self.select_callback(self.index, self.is_selected)
 
   def select(self):
     self.ids.line_label.bg_color = self.selected_bg_color
@@ -76,21 +71,16 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
   def handle_selection_change(self, pressed_index, selected):
     if (selected):
       args = {"line": pressed_index + 1, "file_path": self.file_path_rel}
-      # TODO handle the triggers from gui.py, there you can also use the kv ids instead of the python built-in id
-      # event manager should handle the whole input thing defined in the views/modules files. Else you have to do it in both
-      # the gui.py and the scheduler.py, while it is event functionality
       self.event_call(args)
     else:
       self.item_container.deselect_items()
 
   def receive_event_result(self, **kwargs):
-    commit_id = kwargs["data"].keys()[0]
-
     indices = []
-    for index in kwargs["data"][commit_id]:
+    for index in kwargs["data"]["lines"]:
       indices.append(index-1)
 
     self.item_container.select_items(indices)
 
-    App.get_running_app().trigger_event("commit_context", {"commit_id": commit_id})
-    App.get_running_app().trigger_event("diff", {"commit_id": commit_id})
+    # App.get_running_app().trigger_event("commit_context", {"commit_id": commit_id})
+    # App.get_running_app().trigger_event("diff", {"commit_id": commit_id})

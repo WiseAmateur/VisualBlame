@@ -11,7 +11,7 @@ class Diff(GitModuleBase):
 
   def execute(self):
     try:
-      diff = self.repo.diff(str(self.commit_id) + "^", str(self.commit_id), context_lines=0)
+      diff = self._repo.diff(str(self.commit_id) + "^", str(self.commit_id), context_lines=0)
     except KeyError:
       # First commit has no parent, manually get all the lines from that commit
       super(Diff, self).return_final_result(self._get_first_commit_diff_data(self.commit_id))
@@ -77,7 +77,7 @@ class Diff(GitModuleBase):
   def _get_patch_file_lines(self, patch):
     # First try to get the new version of the file, if there is none (in
     # the case of a deleted file) return an empty list instead
-    commit_file = self.repo.get(patch.delta.new_file.id)
+    commit_file = self._repo.get(patch.delta.new_file.id)
     if commit_file == None:
       return []
 
@@ -96,17 +96,17 @@ class Diff(GitModuleBase):
     diff_data = {}
     prepend = ""
 
-    trees = [self.repo.get(str(first_commit_id)).tree]
+    trees = [self._repo.get(str(first_commit_id)).tree]
 
     while len(trees) > 0:
       tree = trees.pop(0)
       for entry in tree:
         if entry.type == "blob":
-          blob = self.repo.get(str(entry.id))
+          blob = self._repo.get(str(entry.id))
           lines = blob.data.splitlines()
           diff_data[prepend + entry.name] = [self._init_hunk("+", lines)]
         elif entry.type == "tree":
           prepend += entry.name
-          trees.append(self.repo.get(str(entry.id)))
+          trees.append(self._repo.get(str(entry.id)))
 
     return diff_data

@@ -11,9 +11,9 @@ class CommitContext(GitModuleBase):
 
   def execute(self):
     try:
-      commit = self.repo.get(self.commit_id)
+      commit = self._repo.get(self.commit_id)
     except ValueError:
-      commit = self.repo.revparse_single(self.commit_id)
+      commit = self._repo.revparse_single(self.commit_id)
     time = FixedOffset(commit.author.offset)
     dt = datetime.fromtimestamp(float(commit.author.time), time)
     timestr = dt.strftime('%x  %T  %z')

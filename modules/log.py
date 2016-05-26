@@ -11,7 +11,7 @@ class Log(GitModuleBase):
     try:
       self.start_commit_id = kwargs["start_commit_id"]
     except KeyError:
-      self.start_commit_id = self.repo.head.target
+      self.start_commit_id = self._repo.head.target
 
   # Input, amount of commits and start commit
   # Output, commits for timeline, visualize as rectangles with date in middle?
@@ -20,8 +20,8 @@ class Log(GitModuleBase):
   # or just do simple and get commits after given one, if then not enough also take some from before
   # but rather always before and after if possible
   def execute(self):
-    walker = self.repo.walk(self.start_commit_id, pygit2.GIT_SORT_TIME)
-    walker_rev = self.repo.walk(self.start_commit_id, pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_REVERSE)
+    walker = self._repo.walk(self.start_commit_id, pygit2.GIT_SORT_TIME)
+    walker_rev = self._repo.walk(self.start_commit_id, pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_REVERSE)
 
     log_data = []
 

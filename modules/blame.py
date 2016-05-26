@@ -15,21 +15,19 @@ class Blame(GitModuleBase):
     self.line = line
 
   def execute(self):
-    if self.intermediate_data:
-      blame_lines = self.intermediate_data
+    if self._intermediate_data:
+      blame_lines = self._intermediate_data
     else:
       blame_lines = self._get_blame_lines()
       super(Blame, self).return_intermediate_result(blame_lines)
 
     if self.line > -1:
       # TODO find out how the lines work when there are not committed lines in the file. Pref behavior when selecting uncommitted line is select all uncommitted lines
-      # print self.line
-      # print blame_lines
       for commit_id in blame_lines:
         if self.line >= blame_lines[commit_id][0] and self.line <= blame_lines[commit_id][-1] and self.line in blame_lines[commit_id]:
           line_commit_id = commit_id
 
-      super(Blame, self).return_final_result({line_commit_id: blame_lines[line_commit_id]})
+      super(Blame, self).return_final_result({"commit_id": str(line_commit_id), "lines": blame_lines[line_commit_id]})
 
   def _get_blame_lines(self):
     blame_lines = {}
@@ -37,7 +35,7 @@ class Blame(GitModuleBase):
       newest_commit = str(self.newest_commit)
       if len(newest_commit) > 0:
         newest_commit += "^"
-      blame_obj = self.repo.blame(self.file_path, oldest_commit=newest_commit)
+      blame_obj = self._repo.blame(self.file_path, oldest_commit=newest_commit)
     except KeyError:
       logging.error("Blame: blame failed, no such path '" + self.file_path + "' in HEAD")
       sys.exit()
