@@ -3,6 +3,7 @@ import pygit2
 
 from cache import Cache
 
+
 # TODO implement keeping track of active thread and implement queue (need to be thought out more)
 # Handle module requests
 class Scheduler():
@@ -15,7 +16,7 @@ class Scheduler():
     for event in self.events:
       self.event_manager.register_for_call_event(event, self.call_git_module)
 
-  def call_git_module(self, config, event, **args):
+  def call_git_module(self, config, event, cache_only, **args):
     event_id = event
     for arg in args.values():
       event_id += str(arg)
@@ -27,16 +28,16 @@ class Scheduler():
       args["repo"] = self.repo
       args["config"] = config
       args["event_id"] = event_id
+      args["cache_only"] = cache_only
 
       git_module = self.events[event](**args)
 
       thread = threading.Thread(target=git_module.execute, args=()).start()
-    else:
+    elif not cache_only:
       self.event_manager.trigger_result_event(config, self.cache.get(event_id))
 
-  def module_callback(self, cache_key, result_data, config=None, is_final_result=True):
+  def module_callback(self, cache_key, result_data, config=None, cache_only=False):
     self.cache.store(cache_key, result_data)
 
-    if is_final_result:
+    if not cache_only:
       self.event_manager.trigger_result_event(config, result_data)
-      # TODO Check if the active event is a dict, if it is fire up new events after returning results.

@@ -12,12 +12,12 @@ class ResultConfig(namedtuple('ResultConfig', 'event callers')):
 
 
 # Call namedtuple, making sure the events are in a dict
-class CallConfig(namedtuple('CallConfig', 'events caller result_args')):
-  def __new__(cls, events, caller, result_args=""):
+class CallConfig(namedtuple('CallConfig', 'events caller result_args cache_only')):
+  def __new__(cls, events, caller, result_args="", cache_only=False):
     if isinstance(events, basestring):
       events = {events: []}
 
-    return super(CallConfig, cls).__new__(cls, events, caller, result_args)
+    return super(CallConfig, cls).__new__(cls, events, caller, result_args, cache_only)
 
 
 # Class that allows for events to be registered and triggered
@@ -55,6 +55,7 @@ class EventManager():
 
     orig_event = call_config.events.keys()[0]
 
+    # Trigger result event
     event = call_config.caller + orig_event + self.result_append
     self._trigger_event(event, call_config, result)
 
@@ -73,4 +74,5 @@ class EventManager():
       return
 
     for function in listener_functions:
-      function(config=call_config, event=event, **data)
+      function(config=call_config, event=event,
+               cache_only=call_config.cache_only, **data)
