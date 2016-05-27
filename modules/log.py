@@ -25,16 +25,19 @@ class Log(GitModuleBase):
 
     log_data = []
 
+    # TODO add support for small repositories, this could be an endless loop right now if there are just
+    # not enough commits in the repo
     while len(log_data) < self.amount:
       try:
-        log_data.append(walker.next())
+        log_data.append(walker.next().hex)
       except StopIteration:
         pass
 
       try:
-        log_data.insert(0, walker_rev.next())
+        log_data.insert(0, walker_rev.next().hex)
       except StopIteration:
         pass
+
 
     # TODO IN COMMIT FUNCTIONALITY, ALLOW FOR MULTIPLE COMMIT INFO RETRIEVES AT ONCE (LIST INPUT OF IDS) SO THAT LESS THREADS ARE NEEDED IN CASES OF LOG COMMIT DETAILS.
     # TODO instead of amount, do blame commit + 1 before and 1 after, and do diff commit + 1 before and 1 after. ( with something like ... in between if there is a gap which is likely)

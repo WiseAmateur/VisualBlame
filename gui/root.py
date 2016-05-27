@@ -8,9 +8,11 @@ from kivy.app import App
 from gui.widgets.blamecodescrollview import BlameCodeScrollView
 from gui.widgets.diffcodescrollview import DiffCodeScrollView
 from gui.widgets.commitcontextview import CommitContextView
+from gui.widgets.initcommitcontextview import InitCommitContextView
 from gui.widgets.buttontabpanel import ButtonTabPanel
 from gui.widgets.codescrollview import CodeScrollView
 from gui.widgets.switchbutton import SwitchButton
+from gui.widgets.commitboxview import CommitBoxView
 
 
 class VisualBlame(App):
@@ -35,14 +37,11 @@ class VisualBlame(App):
     self._register_result_events()
     self._register_call_events()
 
-    self.root.ids.blame_commit_context.head = True
     # TODO use a different method to let different widgets call each other
     self.root.ids.diff_files.view_to_update = self.root.ids.diff_codelines_list
     self.root.ids.diff_files.active_file = file_path_rel
     self.root.ids.blame_history.active_file = file_path_rel
     self.root.ids.blame_history.receive_event_result(data=[file_path_rel])
-    # TODO make this possible again
-    # self.trigger_event("commit_context", {"commit_id": "HEAD"})
 
     self.root.ids.diff_files.commit_view = self.root.ids.diff_commit_context
     self.root.ids.diff_to_blame.set_scroll_views(self.root.ids.diff_files,

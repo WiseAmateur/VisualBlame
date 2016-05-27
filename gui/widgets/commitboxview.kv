@@ -1,0 +1,13 @@
+#:kivy 1.9.1
+
+<CommitBoxView>:
+  spacing: 2
+  padding: 2
+
+  bg_color: 1, 1, 0
+  canvas.before:
+    Color:
+      rgb: self.bg_color
+    Rectangle:
+      pos: self.pos
+      size: self.size
