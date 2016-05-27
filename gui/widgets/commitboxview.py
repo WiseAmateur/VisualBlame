@@ -1,6 +1,11 @@
 from kivy.uix.boxlayout import BoxLayout
 
 from gui.eventwidget import EventWidget
+from gui.widgets.labelrecolorable import LabelRecolorable
+
+
+class CommitBox(LabelRecolorable):
+  pass
 
 
 class CommitBoxView(BoxLayout, EventWidget):
@@ -10,3 +15,5 @@ class CommitBoxView(BoxLayout, EventWidget):
 
   def receive_event_result(self, **kwargs):
     print kwargs
+    for commit_hex in kwargs["data"]:
+      self.add_widget(CommitBox(text=commit_hex[:5]))
