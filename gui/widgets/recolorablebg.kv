@@ -1,0 +1,28 @@
+#:kivy 1.9.1
+
+<WidgetRecolorable>:
+  bg_color: 0, 0, 0
+  canvas.before:
+    Color:
+      rgb: self.bg_color
+    Rectangle:
+      pos: self.pos
+      size: self.size
+
+<WidgetRecolorableBorder>:
+  bg_color: 1, 1, 1
+  border_color: 0, 0, 0
+  border_width: 1
+
+  canvas.before:
+    Color:
+      rgb: self.border_color
+    Rectangle:
+      pos: self.pos
+      size: self.size
+
+    Color:
+      rgb: self.bg_color
+    Rectangle:
+      pos: (self.x + self.border_width, self.y + self.border_width)
+      size: (self.width - 2 * self.border_width, self.height - 2 * self.border_width)

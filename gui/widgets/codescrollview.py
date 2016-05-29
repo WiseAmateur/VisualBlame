@@ -4,7 +4,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 
-from gui.widgets.labelrecolorable import LabelRecolorable
+from gui.widgets.recolorablebg import LabelRecolorable
 
 
 class CodeListItem(BoxLayout):

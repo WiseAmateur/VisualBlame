@@ -3,29 +3,12 @@
 <CommitBoxView>:
   spacing: 10
   padding: 5
-  size_hint: (1, None)
-  height: 60
-
-  bg_color: 1, 1, 0
-  canvas.before:
-    Color:
-      rgb: self.bg_color
-    Rectangle:
-      pos: self.pos
-      size: self.size
 
 <CommitBox>:
   padding: (2, 2)
   size_hint: (None, None)
   size: (50, 50)
-  bg_color: 1, 0, 0
-  inner_bg_color: 1, 1, 1
+  border_color: 1, 0, 0
+  bg_color: 1, 1, 1
   color: [0, 0, 0, 1]
   border_width: 2
-
-  canvas.before:
-    Color:
-      rgb: self.inner_bg_color
-    Rectangle:
-      pos: (self.x + self.border_width, self.y + self.border_width)
-      size: (self.width - 2 * self.border_width, self.height - 2 * self.border_width)

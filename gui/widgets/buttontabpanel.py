@@ -11,7 +11,6 @@ from gui.eventwidget import EventWidget
 
 
 class TabButton(Button):
-  background_down = StringProperty('atlas://data/images/defaulttheme/button')
   is_selected = False
 
   def __init__(self, **kwargs):

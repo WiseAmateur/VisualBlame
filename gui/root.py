@@ -31,7 +31,6 @@ class VisualBlame(App):
     file_path_rel = self.init_args["file_path_rel"]
 
     self.root.ids.blame_codelines_list.init_code_view(**self.init_args)
-    self.root.ids.diff_codelines_list.init_code_view(data=[])
     self.init_args = None
 
     self._register_result_events()
@@ -46,6 +45,8 @@ class VisualBlame(App):
     self.root.ids.diff_files.commit_view = self.root.ids.diff_commit_context
     self.root.ids.diff_to_blame.set_scroll_views(self.root.ids.diff_files,
                                                self.root.ids.blame_codelines_list)
+
+
 
   # The register functions assume the event manager is set correctly
   # and the widget_ids are correct
