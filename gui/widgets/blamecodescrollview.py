@@ -57,9 +57,10 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
   item_container_cls = BlameCodeContainer
   line_item_cls = BlameCodeListItem
 
-  def init_code_view(self, file_path_rel="", **kwargs):
+  def init_code_view(self, file_path_rel="", newest_commit="", **kwargs):
     self.line_index = 0
     self.file_path_rel = file_path_rel
+    self.newest_commit = newest_commit
 
     super(BlameCodeScrollView, self).init_code_view(**kwargs)
 
@@ -70,7 +71,8 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
 
   def handle_selection_change(self, pressed_index, selected):
     if (selected):
-      args = {"line": pressed_index + 1, "file_path": self.file_path_rel}
+      args = {"line": pressed_index + 1, "file_path": self.file_path_rel,
+              "newest_commit": self.newest_commit}
       self.event_call(args)
     else:
       self.item_container.deselect_items()

@@ -18,8 +18,7 @@ def handle_argv():
   parser = argparse.ArgumentParser()
   parser.add_argument("file_path", type=str, help="Path to the file to start the application with")
 
-  args = parser.parse_args()
-  file_path = args.file_path
+  file_path = parser.parse_args().file_path
 
   if not os.path.isfile(file_path):
     logging.error("Input: invalid file path")

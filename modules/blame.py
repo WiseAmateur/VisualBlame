@@ -32,10 +32,7 @@ class Blame(GitModuleBase):
   def _get_blame_lines(self):
     blame_lines = {}
     try:
-      newest_commit = str(self.newest_commit)
-      if len(newest_commit) > 0:
-        newest_commit += "^"
-      blame_obj = self._repo.blame(self.file_path, oldest_commit=newest_commit)
+      blame_obj = self._repo.blame(self.file_path, newest_commit=str(self.newest_commit))
     except KeyError:
       logging.error("Blame: blame failed, no such path '" + self.file_path + "' in HEAD")
       sys.exit()

@@ -22,25 +22,24 @@ class CodeScrollView(ScrollView):
   item_container_cls = CodeContainer
   line_item_cls = CodeListItem
 
-  def __init__(self, **kwargs):
-    super(CodeScrollView, self).__init__(**kwargs)
+  def init_code_view(self, data=None, **kwargs):
+    self._remove_all_lines()
+
     self.item_container = self.item_container_cls()
     self.add_widget(self.item_container)
 
-  def init_code_view(self, data=None, **kwargs):
-    self._insert_lines(self._format_line_data(data))
-
-  def _insert_lines(self, lines):
-    self._remove_all_lines()
-
-    for line in lines:
+    for line in self._format_line_data(data):
       self._insert_line(**line._asdict())
 
   def _insert_line(self, **kwargs):
     self.item_container.add_widget(self.line_item_cls(**kwargs))
 
   def _remove_all_lines(self):
-    self.item_container.children = []
+    # The first time there is no item_container yet, catch that error
+    try:
+      self.remove_widget(self.item_container)
+    except AttributeError:
+      pass
 
   # Change the data from [line] to [namedtuple(index, line)]
   def _format_line_data(self, lines):

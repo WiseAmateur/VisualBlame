@@ -46,10 +46,8 @@ class VisualBlame(App):
     self.root.ids.diff_to_blame.set_scroll_views(self.root.ids.diff_files,
                                                self.root.ids.blame_codelines_list)
 
-
-
   # The register functions assume the event manager is set correctly
-  # and the widget_ids are correct
+  # and the widget ids are correct
   def _register_result_events(self):
     for widget_id in self.widget_event_listeners:
       self.event_manager.register_for_result_event(self.widget_event_listeners[widget_id],

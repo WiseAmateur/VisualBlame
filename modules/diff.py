@@ -11,7 +11,8 @@ class Diff(GitModuleBase):
 
   def execute(self):
     try:
-      diff = self._repo.diff(str(self.commit_id) + "^", str(self.commit_id), context_lines=0)
+      diff = self._repo.diff(str(self.commit_id) + "^", str(self.commit_id), context_lines=0, flags=pygit2.GIT_DIFF_INCLUDE_UNMODIFIED)
+      diff.find_similar()
     except KeyError:
       # First commit has no parent, manually get all the lines from that commit
       super(Diff, self).return_final_result(self._get_first_commit_diff_data(self.commit_id))
@@ -20,6 +21,9 @@ class Diff(GitModuleBase):
     diff_data = {}
 
     for commit_file in diff:
+      # Check if the file was renamed
+      # if commit_file.delta.status == pygit2.GIT_DELTA_RENAMED:
+        # print "renamed: " + commit_file.delta.old_file.path + " -> " + commit_file.delta.new_file.path
       commit_file_path_rel = commit_file.delta.old_file.path
 
       commit_file_lines = self._get_patch_file_lines(commit_file)

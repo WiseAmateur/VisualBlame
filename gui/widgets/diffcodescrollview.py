@@ -15,7 +15,7 @@ class DiffCodeListItem(CodeListItem):
 
 
 class DiffCodeScrollView(CodeScrollView):
-  color_mapping = {"+": (0.5, 0.6, 0.25), "-": (0.6, 0.1, 0.1), " ": (0, 0, 0)}
+  color_mapping = {"+": [0.5, 0.6, 0.25], "-": [0.6, 0.1, 0.1], " ": [0, 0, 0]}
   line_item_cls = DiffCodeListItem
 
   def _format_line_data(self, data):

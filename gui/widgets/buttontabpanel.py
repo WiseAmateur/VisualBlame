@@ -36,12 +36,8 @@ class TabButton(Button):
 
 class TabPanel(StackLayout):
   def add_buttons(self, button_names):
-    self.children = []
     for name in button_names:
       self.add_widget(TabButton(text=name))
-
-  def remove_buttons(self):
-    self.children = []
 
   def deselect_buttons(self):
     for button in self.children:
@@ -65,10 +61,21 @@ class ButtonTabPanel(ScrollView, EventWidget):
     # print self.view_to_update
     file_names = [file_name for file_name in kwargs["data"]]
 
-    self.ids.button_container.add_buttons(file_names)
+    self._remove_tab_buttons()
+    self.button_container = TabPanel()
+    self.add_widget(self.button_container)
+
+    self.button_container.add_buttons(file_names)
     try:
-      self.ids.button_container.select_button(file_names[::-1].index(self.active_file))
+      self.button_container.select_button(file_names[::-1].index(self.active_file))
     except ValueError:
+      pass
+
+  def _remove_tab_buttons(self):
+    # The first time time there is no button container, catch the error
+    try:
+      self.remove_widget(self.button_container)
+    except AttributeError:
       pass
 
   def update_list(self, file_name):
@@ -79,11 +86,11 @@ class ButtonTabPanel(ScrollView, EventWidget):
   def get_data(self):
     BlameArgs = namedtuple("BlameArgs", ["file_path_rel", "newest_commit", "data"])
     file_name = self.diff_active_file
-    newest_commit = self.commit_view.getCommitId()
+    newest_commit = self.commit_view.get_commit_id()
     lines = self.view_to_update.get_lines()
 
-    self.ids.button_container.remove_buttons()
-    self.view_to_update._removeAllLines()
-    self.commit_view.emptyCommitContext()
+    self._remove_tab_buttons()
+    self.view_to_update._remove_all_lines()
+    self.commit_view.empty_commit_context()
 
     return BlameArgs(file_name, newest_commit, lines)
