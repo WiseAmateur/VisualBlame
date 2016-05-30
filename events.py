@@ -27,12 +27,16 @@ class EventManager():
     self.active_call_config = None
     self.result_append = "_result"
 
-  def register_for_result_event(self, result_config, function):
-    # Assumes the result config is valid
-    event = result_config.event + self.result_append
+  def register_for_result_event(self, result_configs, function):
+    if type(result_configs) is not list:
+      result_configs = [result_configs]
 
-    for caller in result_config.callers:
-      self._register_event(caller + event, function)
+    for result_config in result_configs:
+      # Assumes the result config is valid
+      event = result_config.event + self.result_append
+
+      for caller in result_config.callers:
+        self._register_event(caller + event, function)
 
   def register_for_call_event(self, event, function):
     self._register_event(event, function)
@@ -60,11 +64,11 @@ class EventManager():
     self._trigger_event(event, call_config, result)
 
     # Trigger the additional events with the input of this result
-    if call_config == self.active_call_config:
-      for event in call_config.events[orig_event]:
-        key = event.keys()[0]
-        self._trigger_event(key, call_config._replace(events=event),
-                            {call_config.result_args: data[call_config.result_args]})
+    # if call_config == self.active_call_config:
+    for event in call_config.events[orig_event]:
+      key = event.keys()[0]
+      self._trigger_event(key, call_config._replace(events=event),
+                          {call_config.result_args: data[call_config.result_args]})
 
   def _trigger_event(self, event, call_config, data):
     try:

@@ -5,12 +5,12 @@ from modules.modulebase import GitModuleBase
 
 
 class Log(GitModuleBase):
-  def __init__(self, **kwargs):
+  def __init__(self, amount=10, start_commit_id="HEAD", **kwargs):
     super(Log, self).__init__(**kwargs)
-    self.amount = kwargs["amount"]
+    self.amount = amount
     try:
-      self.start_commit_id = kwargs["start_commit_id"]
-    except KeyError:
+      self.start_commit_id = pygit2.Oid(hex=start_commit_id)
+    except ValueError:
       self.start_commit_id = self._repo.head.target
 
   # Input, amount of commits and start commit
@@ -20,26 +20,25 @@ class Log(GitModuleBase):
   # or just do simple and get commits after given one, if then not enough also take some from before
   # but rather always before and after if possible
   def execute(self):
+    CommitInfo = namedtuple('CommitInfo', ['commit_hex', 'commit_date', 'commit_message'])
     walker = self._repo.walk(self.start_commit_id, pygit2.GIT_SORT_TIME)
     walker_rev = self._repo.walk(self.start_commit_id, pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_REVERSE)
 
     log_data = []
 
-    # TODO add support for small repositories, this could be an endless loop right now if there are just
-    # not enough commits in the repo
     while len(log_data) < self.amount:
       try:
         log_data.append(walker.next().hex)
       except StopIteration:
-        pass
+        break
 
-      try:
-        log_data.insert(0, walker_rev.next().hex)
-      except StopIteration:
-        pass
+      # try:
+        # log_data.insert(0, walker_rev.next().hex)
+      # except StopIteration:
+        # pass
 
 
     # TODO IN COMMIT FUNCTIONALITY, ALLOW FOR MULTIPLE COMMIT INFO RETRIEVES AT ONCE (LIST INPUT OF IDS) SO THAT LESS THREADS ARE NEEDED IN CASES OF LOG COMMIT DETAILS.
     # TODO instead of amount, do blame commit + 1 before and 1 after, and do diff commit + 1 before and 1 after. ( with something like ... in between if there is a gap which is likely)
 
-    super(Log, self).return_final_result(log_data)
+    super(Log, self).return_final_result({"commit_ids": log_data})
