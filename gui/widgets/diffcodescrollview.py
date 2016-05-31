@@ -1,15 +1,12 @@
 from collections import namedtuple
 
-from kivy.adapters.listadapter import ListAdapter
-
 from gui.widgets.codescrollview import CodeScrollView, CodeListItem
 
 
 class DiffCodeListItem(CodeListItem):
   def __init__(self, bg_color=[0, 0, 0], **kwargs):
+    self.line_bg_color = bg_color
     super(DiffCodeListItem, self).__init__(**kwargs)
-    if bg_color != [0, 0, 0]:
-      self.ids.line_label.bg_color = bg_color
 
 
 class DiffCodeScrollView(CodeScrollView):

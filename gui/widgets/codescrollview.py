@@ -8,6 +8,8 @@ from gui.widgets.recolorablebg import LabelRecolorable
 
 
 class CodeListItem(BoxLayout):
+  line_bg_color = [0, 0, 0]
+
   def __init__(self, str_index="", line="", **kwargs):
     self.linenum_text = str_index
     self.line_text = line
