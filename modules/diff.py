@@ -21,6 +21,11 @@ class Diff(GitModuleBase):
     diff_data = {}
 
     for commit_file in diff:
+      # TODO include renamed in this check, right now the renamed files
+      # without changes won't be included in the final diff
+      if not len(commit_file.hunks):
+        continue
+
       # Check if the file was renamed
       # if commit_file.delta.status == pygit2.GIT_DELTA_RENAMED:
         # print "renamed: " + commit_file.delta.old_file.path + " -> " + commit_file.delta.new_file.path
