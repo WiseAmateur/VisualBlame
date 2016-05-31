@@ -15,7 +15,7 @@
     size_hint: None, 1
     width: self.texture_size[0]
     text_size: None, self.size[1]
-    text: '0'
+    text: self.parent.linenum_text
     valign: 'top'
 
   CodeLineLabel:
@@ -24,7 +24,7 @@
     size_hint: 1, None
     height: self.texture_size[1] if self.texture_size[1] > 21 else 21
     text_size: self.width, None
-    text: 'line'
+    text: self.parent.line_text
     halign: 'left'
 
 <BlameCodeListItem>:

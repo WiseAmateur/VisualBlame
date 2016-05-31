@@ -9,9 +9,9 @@ from gui.widgets.recolorablebg import LabelRecolorable
 
 class CodeListItem(BoxLayout):
   def __init__(self, str_index="", line="", **kwargs):
+    self.linenum_text = str_index
+    self.line_text = line
     super(CodeListItem, self).__init__(**kwargs)
-    self.ids.linenum_label.text = str_index
-    self.ids.line_label.text = line
 
 
 class CodeContainer(GridLayout):
