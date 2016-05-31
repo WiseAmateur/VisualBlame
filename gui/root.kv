@@ -22,36 +22,39 @@ BoxLayoutRecolorable:
     ButtonTabPanel:
       id: blame_history
 
-    ButtonTabPanel:
+    DiffButtonTabPanel:
       id: diff_files
+      view_to_update: diff_codelines_list
+      commit_view: diff_commit_context
 
   BoxLayout:
     size_hint: (1.0, 0.70)
 
     BlameCodeScrollView:
       id: blame_codelines_list
+      on_file_path_rel: pass
 
-    BoxLayout:
-      orientation: 'vertical'
+    SwitchButton:
+      id: diff_to_blame
       size_hint: (None, 1.0)
       width: 50
-
-      SwitchButton:
-        id: diff_to_blame
-        text: "<"
-
-      SwitchButton:
-        text: ">"
+      text: "<"
+      from_scrollview: diff_files
+      to_scrollview: blame_codelines_list
 
     DiffCodeScrollView:
       id: diff_codelines_list
 
   BoxLayout:
-    spacing: 50
     size_hint: (1.0, 0.3)
 
     InitCommitContextView:
       id: blame_commit_context
+
+    SwitchButton:
+      text: ">"
+      size_hint: (None, 1.0)
+      width: 50
 
     CommitContextView:
       id: diff_commit_context

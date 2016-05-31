@@ -1,3 +1,4 @@
+from kivy.properties import StringProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.graphics import Color, Rectangle
 from kivy.app import App
@@ -56,6 +57,7 @@ class BlameCodeContainer(CodeContainer):
 class BlameCodeScrollView(CodeScrollView, EventWidget):
   item_container_cls = BlameCodeContainer
   line_item_cls = BlameCodeListItem
+  file_path_rel = StringProperty()
 
   def init_code_view(self, file_path_rel="", newest_commit="", **kwargs):
     self.line_index = 0

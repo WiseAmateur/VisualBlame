@@ -10,6 +10,7 @@ from gui.widgets.diffcodescrollview import DiffCodeScrollView
 from gui.widgets.commitcontextview import CommitContextView
 from gui.widgets.initcommitcontextview import InitCommitContextView
 from gui.widgets.buttontabpanel import ButtonTabPanel
+from gui.widgets.diffbuttontabpanel import DiffButtonTabPanel
 from gui.widgets.codescrollview import CodeScrollView
 from gui.widgets.switchbutton import SwitchButton
 from gui.widgets.commitboxview import CommitBoxView
@@ -35,16 +36,12 @@ class VisualBlame(App):
 
     self._register_result_events()
     self._register_call_events()
+    # self._bind_widgets()
 
     # TODO use a different method to let different widgets call each other
-    self.root.ids.diff_files.view_to_update = self.root.ids.diff_codelines_list
     self.root.ids.diff_files.active_file = file_path_rel
     self.root.ids.blame_history.active_file = file_path_rel
     self.root.ids.blame_history.receive_event_result(data=[file_path_rel])
-
-    self.root.ids.diff_files.commit_view = self.root.ids.diff_commit_context
-    self.root.ids.diff_to_blame.set_scroll_views(self.root.ids.diff_files,
-                                               self.root.ids.blame_codelines_list)
 
   # The register functions assume the event manager is set correctly
   # and the widget ids are correct

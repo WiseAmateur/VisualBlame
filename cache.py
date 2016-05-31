@@ -1,3 +1,6 @@
+from threading import Lock
+
+
 class Cache():
   def __init__(self):
     self.cache = {}
@@ -7,10 +10,25 @@ class Cache():
     return len(self.cache)
 
   def store(self, key, value):
-    self.cache[key] = value
+    lock = Lock()
+
+    lock.acquire()
+    try:
+      self.cache[key] = value
+    finally:
+      lock.release()
 
   def get(self, key):
+    lock = Lock()
+
+    lock.acquire()
     try:
-      return self.cache[key]
-    except KeyError:
-      return self.default
+      # print "get key:", "<<<<<" + key + ">>>>"
+      # for key in self.cache:
+        # print "key:", key
+      try:
+        return self.cache[key]
+      except KeyError:
+        return self.default
+    finally:
+      lock.release()

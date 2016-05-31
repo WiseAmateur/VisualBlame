@@ -1,8 +1,8 @@
-import sys
-import os.path
+from pygit2 import discover_repository
+from argparse import ArgumentParser
+from os import path
 import logging
-import pygit2
-import argparse
+import sys
 
 from scheduler import Scheduler
 from gui.root import VisualBlame
@@ -15,12 +15,12 @@ from gui.widget_event_config import widget_event_listeners, widget_event_trigger
 # one command line argument containing the file path of the file to open
 # the application with
 def handle_argv():
-  parser = argparse.ArgumentParser()
+  parser = ArgumentParser()
   parser.add_argument("file_path", type=str, help="Path to the file to start the application with")
 
   file_path = parser.parse_args().file_path
 
-  if not os.path.isfile(file_path):
+  if not path.isfile(file_path):
     logging.error("Input: invalid file path")
     sys.exit()
 
@@ -34,8 +34,8 @@ def read_file(file_path):
 
 if __name__ == '__main__':
   file_path = handle_argv()
-  file_path_abs = os.path.abspath(file_path)
-  git_dir = pygit2.discover_repository(file_path)
+  file_path_abs = path.abspath(file_path)
+  git_dir = discover_repository(file_path)
   file_path_rel = file_path_abs[len(git_dir) - 5:]
 
   event_manager = EventManager()
