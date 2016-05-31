@@ -5,9 +5,12 @@ from modules.modulebase import GitModuleBase
 
 
 class CommitContext(GitModuleBase):
-  def __init__(self, commit_ids="HEAD", **kwargs):
+  def __init__(self, commit_id="HEAD", commit_ids=[], **kwargs):
     super(CommitContext, self).__init__(**kwargs)
-    self.commit_id = commit_ids
+    if len(commit_ids):
+      self.commit_id = commit_ids
+    else:
+      self.commit_id = commit_id
 
   def execute(self):
     if type(self.commit_id) is list:
