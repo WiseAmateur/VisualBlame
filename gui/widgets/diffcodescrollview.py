@@ -4,19 +4,25 @@ from kivy.adapters.listadapter import ListAdapter
 from kivy.app import App
 
 from gui.widgets.codescrollview import CodeScrollView, CodeListItem
+from gui.widgets.recolorablebg import WidgetRecolorable
 
 
-class DiffCodeListItem(CodeListItem):
-  def __init__(self, bg_color=(0, 0, 0), **kwargs):
+class DiffCodeListItem(CodeListItem, WidgetRecolorable):
+  def __init__(self, bg_color=[0, 0, 0], **kwargs):
     super(DiffCodeListItem, self).__init__(**kwargs)
-    if bg_color != (0, 0, 0):
-      self.ids.linenum_label.bg_color = bg_color
+    self.bg_color = bg_color
     self.ids.line_label.bg_color = bg_color
 
 
 class DiffCodeScrollView(CodeScrollView):
   color_mapping = {"+": [0.5, 0.6, 0.25], "-": [0.6, 0.1, 0.1], " ": [0, 0, 0]}
-  line_item_cls = DiffCodeListItem
+  line_item_cls_colored = DiffCodeListItem
+
+  def _insert_line(self, **kwargs):
+    if kwargs["bg_color"] != [0, 0, 0]:
+      self.item_container.add_widget(self.line_item_cls_colored(**kwargs))
+    else:
+      super(DiffCodeScrollView, self)._insert_line(**kwargs)
 
   def _format_line_data(self, data):
     ColoredLine = namedtuple('ColoredLine', ['str_index', 'line', 'bg_color'])
