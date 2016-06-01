@@ -7,7 +7,7 @@ widget_event_listeners = {
   "blame_commit_context": ResultConfig(event="commit_context", callers=["blame_commit_context", "diff_to_blame"]),
   "diff_commit_context": ResultConfig(event="commit_context", callers="blame_codelines_list"),
   "log_commit_history": [ResultConfig(event="log", callers="log_commit_history"),
-                         ResultConfig(event="commit_context", callers="log_commit_history")]
+                         ResultConfig(event="commit_context", callers=["log_commit_history", "diff_to_blame"])]
 }
 
 # You have to specify the caller to the widget id already entered as a
@@ -18,5 +18,7 @@ widget_event_triggers = {
                                      caller="blame_codelines_list", result_args="commit_id"),
   "blame_commit_context": CallConfig(events="commit_context", caller="blame_commit_context"),
   "log_commit_history": CallConfig(events={"log": [{"commit_context": []}]},
-                                   caller="log_commit_history", result_args="commit_ids")
+                                   caller="log_commit_history", result_args="commit_ids"),
+  "diff_to_blame": CallConfig(events={"log": [{"commit_context": []}]},
+                                   caller="diff_to_blame", result_args="commit_ids"),
 }

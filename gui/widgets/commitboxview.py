@@ -16,7 +16,7 @@ class CommitBox(BoxLayout, WidgetRecolorableBorder):
 class CommitBoxView(BoxLayout, EventWidget):
   def init_event_call(self, event_config, function):
     super(CommitBoxView, self).init_event_call(event_config, function)
-    self.event_call("HEAD", 10)
+    self.event_call("HEAD", 20)
 
   def event_call(self, commit_id, amount):
     args = {"start_commit_id": commit_id, "amount": amount}
@@ -25,6 +25,7 @@ class CommitBoxView(BoxLayout, EventWidget):
 
   def receive_event_result(self, **kwargs):
     if type(kwargs["data"]) is list:
+      self.clear_widgets()
       for commit_data in kwargs["data"]:
         self.add_widget(CommitBox(commit_hex=commit_data["id"], commit_date=commit_data["date"],
                                   commit_message=commit_data["message"]))
