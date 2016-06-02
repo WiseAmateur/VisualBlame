@@ -31,7 +31,7 @@ class Diff(GitModuleBase):
         # print "renamed: " + commit_file.delta.old_file.path + " -> " + commit_file.delta.new_file.path
       commit_file_path_rel = commit_file.delta.old_file.path
 
-      commit_file_lines = self._get_patch_file_lines(commit_file)
+      commit_file_lines = self._get_patch_new_file_lines(commit_file)
 
       diff_data[commit_file_path_rel] = self._create_diff_hunk_list(commit_file_lines, commit_file.hunks)
 
@@ -43,24 +43,31 @@ class Diff(GitModuleBase):
   def _create_diff_hunk_list(self, file_lines, diff_hunks):
     commit_file_hunks = []
 
-    last_lineno = 0
+    old_file_diff_counter = 0
+
+    last_lineno = 1
     for hunk in diff_hunks:
-      hunk_first_lineno = max(hunk.lines[0].new_lineno, hunk.lines[0].old_lineno)
+      if hunk.lines[0].new_lineno != -1:
+        hunk_first_lineno = hunk.lines[0].new_lineno
+      else:
+        hunk_first_lineno = hunk.lines[0].old_lineno + old_file_diff_counter
 
       # Add a neutral line hunk if there are lines between the end of
       # the last hunk and the start of this hunk
       if hunk_first_lineno > last_lineno:
-        commit_file_hunks.append(self._init_hunk(" ", file_lines[last_lineno:hunk_first_lineno-1]))
+        commit_file_hunks.append(self._init_hunk(" ", file_lines[last_lineno-1:hunk_first_lineno-1]))
         # Do not want to do this in the case the hunk only contains -?
         last_lineno = hunk_first_lineno
 
       for line in hunk.lines:
-        # Only do something if the line is added or removed (can be < in
-        # the case if the last line has no newline). If it is an added
-        # line, also increment the last line number
+        # Only do something if the line is added or removed (can be "<"
+        # in the case if the last line has no newline).
         if line.origin == "+":
-          last_lineno = max(line.new_lineno, line.old_lineno)
-        elif line.origin != "-":
+          last_lineno += 1
+          old_file_diff_counter += 1
+        elif line.origin == "-":
+          old_file_diff_counter -= 1
+        else:
           continue
 
         line_content = line.content.strip('\n')
@@ -79,11 +86,11 @@ class Diff(GitModuleBase):
 
     # If there are lines in the file after the last hunk, add them here
     if last_lineno < len(file_lines):
-      commit_file_hunks.append(self._init_hunk(" ", file_lines[last_lineno:len(file_lines)]))
+      commit_file_hunks.append(self._init_hunk(" ", file_lines[last_lineno-1:len(file_lines)]))
 
     return commit_file_hunks
 
-  def _get_patch_file_lines(self, patch):
+  def _get_patch_new_file_lines(self, patch):
     # First try to get the new version of the file, if there is none (in
     # the case of a deleted file) return an empty list instead
     commit_file = self._repo.get(patch.delta.new_file.id)
