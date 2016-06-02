@@ -79,7 +79,7 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
     else:
       self.item_container.deselect_items()
 
-  def receive_event_result(self, **kwargs):
+  def process_event_result(self, **kwargs):
     indices = []
     for index in kwargs["data"]["lines"]:
       indices.append(index-1)

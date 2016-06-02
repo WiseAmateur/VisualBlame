@@ -63,7 +63,7 @@ class ButtonTabPanel(ScrollView, EventWidget):
     self.button_container = TabPanel(select_callback=self.update_list)
     self.add_widget(self.button_container)
 
-  def receive_event_result(self, data=[], **kwargs):
+  def process_event_result(self, data=[], **kwargs):
     # TODO find another way to do this, this data is most likely also in the cache..
     self.data = data
     # print self.view_to_update

@@ -5,7 +5,7 @@ from gui.eventwidget import EventWidget
 
 
 class CommitContextView(GridLayout, EventWidget):
-  def receive_event_result(self, **kwargs):
+  def process_event_result(self, **kwargs):
     if type(kwargs["data"]) is list:
       data = kwargs["data"][0]
     else:

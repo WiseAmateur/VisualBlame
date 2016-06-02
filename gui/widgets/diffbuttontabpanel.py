@@ -4,10 +4,10 @@ from gui.widgets.buttontabpanel import ButtonTabPanel
 
 
 class DiffButtonTabPanel(ButtonTabPanel):
-  def receive_event_result(self, **kwargs):
+  def process_event_result(self, **kwargs):
     self._remove_tab_buttons()
     self._init_tab_panel()
-    super(DiffButtonTabPanel, self).receive_event_result(**kwargs)
+    super(DiffButtonTabPanel, self).process_event_result(**kwargs)
 
   def _remove_tab_buttons(self):
     try:

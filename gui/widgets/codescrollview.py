@@ -28,10 +28,11 @@ class CodeScrollView(ScrollView):
     self._remove_all_lines()
 
     self.item_container = self.item_container_cls()
-    self.add_widget(self.item_container)
 
     for line in self._format_line_data(data):
       self._insert_line(**line._asdict())
+
+    self.add_widget(self.item_container)
 
   def _insert_line(self, **kwargs):
     self.item_container.add_widget(self.line_item_cls(**kwargs))

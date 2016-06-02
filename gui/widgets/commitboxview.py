@@ -23,7 +23,7 @@ class CommitBoxView(BoxLayout, EventWidget):
     #"5217c2001a066041f6a595dc3e062cbb126da9da"
     super(CommitBoxView, self).event_call(args)
 
-  def receive_event_result(self, **kwargs):
+  def process_event_result(self, **kwargs):
     if type(kwargs["data"]) is list:
       self.clear_widgets()
       for commit_data in kwargs["data"]:
