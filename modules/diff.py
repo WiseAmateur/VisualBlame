@@ -12,6 +12,7 @@ class Diff(GitModuleBase):
   def execute(self):
     try:
       diff = self._repo.diff(str(self.commit_id) + "^", str(self.commit_id), context_lines=0, flags=pygit2.GIT_DIFF_INCLUDE_UNMODIFIED)
+      # Merge the diffs that are caused by a renamed file
       diff.find_similar()
     except KeyError:
       # First commit has no parent, manually get all the lines from that commit
@@ -21,31 +22,31 @@ class Diff(GitModuleBase):
     diff_data = {}
 
     for commit_file in diff:
-      # TODO include renamed in this check, right now the renamed files
-      # without changes won't be included in the final diff
+      # TODO now exludes renamed but unmodified files, include later
+      # with check: commit_file.delta.status == pygit2.GIT_DELTA_RENAMED
       if not len(commit_file.hunks):
         continue
 
-      # Check if the file was renamed
-      # if commit_file.delta.status == pygit2.GIT_DELTA_RENAMED:
-        # print "renamed: " + commit_file.delta.old_file.path + " -> " + commit_file.delta.new_file.path
       commit_file_path_rel = commit_file.delta.old_file.path
 
-      commit_file_lines = self._get_patch_new_file_lines(commit_file)
+      commit_new_file_lines = self._get_patch_new_file_lines(commit_file)
 
-      diff_data[commit_file_path_rel] = self._create_diff_hunk_list(commit_file_lines, commit_file.hunks)
+      diff_data[commit_file_path_rel] = self._create_diff_hunk_list(commit_new_file_lines, commit_file.hunks)
 
     super(Diff, self).return_final_result(diff_data)
 
-  # From a list containing the lines of a file and a list of diff hunks of that
-  # file, create a new sorted list with hunks containing only neutral,
-  # added or removed lines
+  # From a list containing the lines of the new version of that file and
+  # a list of diff hunks of that file, create a new sorted list with
+  # hunks containing only neutral, added or removed lines
   def _create_diff_hunk_list(self, file_lines, diff_hunks):
     commit_file_hunks = []
 
+    # The counter is used to keep track of the difference between the
+    # old file line number and the new file line number, to determine
+    # where removed lines have to be added between the new files lines.
     old_file_diff_counter = 0
-
     last_lineno = 1
+
     for hunk in diff_hunks:
       if hunk.lines[0].new_lineno != -1:
         hunk_first_lineno = hunk.lines[0].new_lineno
@@ -56,7 +57,6 @@ class Diff(GitModuleBase):
       # the last hunk and the start of this hunk
       if hunk_first_lineno > last_lineno:
         commit_file_hunks.append(self._init_hunk(" ", file_lines[last_lineno-1:hunk_first_lineno-1]))
-        # Do not want to do this in the case the hunk only contains -?
         last_lineno = hunk_first_lineno
 
       for line in hunk.lines:
@@ -109,13 +109,17 @@ class Diff(GitModuleBase):
     return FileDiffHunk(hunk_type, lines)
 
   def _get_first_commit_diff_data(self, first_commit_id):
+    TreeData = namedtuple('TreeData', ['prepend', 'tree'])
     diff_data = {}
-    prepend = ""
 
-    trees = [self._repo.get(str(first_commit_id)).tree]
+    trees = [TreeData('', self._repo.get(str(first_commit_id)).tree)]
 
+    # Add every blob in the whole tree to the diff data as a newly added
+    # file with the correct directory prefix
     while len(trees) > 0:
-      tree = trees.pop(0)
+      tree_data = trees.pop(0)
+      tree = tree_data.tree
+      prepend = tree_data.prepend
       for entry in tree:
         if entry.type == "blob":
           blob = self._repo.get(str(entry.id))
@@ -123,6 +127,6 @@ class Diff(GitModuleBase):
           diff_data[prepend + entry.name] = [self._init_hunk("+", lines)]
         elif entry.type == "tree":
           prepend += entry.name
-          trees.append(self._repo.get(str(entry.id)))
+          trees.append(TreeData(prepend + entry.name + "/", self._repo.get(str(entry.id))))
 
     return diff_data
