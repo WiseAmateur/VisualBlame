@@ -50,6 +50,7 @@ BoxLayoutRecolorable:
 
     InitCommitContextView:
       id: blame_commit_context
+      on_switch: log_commit_history.update_viewed_commit("blame", self.ids.id.text, [0.25, 0.75, 0.5])
 
     SwitchButton:
       text: ">"
@@ -58,3 +59,4 @@ BoxLayoutRecolorable:
 
     CommitContextView:
       id: diff_commit_context
+      on_switch: log_commit_history.update_viewed_commit("diff", self.ids.id.text, [0.25, 0.5, 0.75])

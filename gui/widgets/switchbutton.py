@@ -10,7 +10,7 @@ class SwitchButton(Button, EventWidget):
     try:
       scrollview_args = self.from_scrollview.get_data()
       self.to_scrollview.init_code_view(**scrollview_args._asdict())
-      args={"amount": 20, "start_commit_id": scrollview_args.newest_commit}
+      args={"amount": 10, "commit_id": scrollview_args.newest_commit}
       self.event_call(args)
     except AttributeError:
       logging.warn("SwitchButton: codescrollviews not set")

@@ -5,7 +5,10 @@ from kivy.clock import Clock
 
 class EventWidget():
   def init_event_call(self, event_config, function):
-    self._config = event_config
+    if not type(event_config) is list:
+      self._configs = [event_config]
+    else:
+      self._configs = event_config
     self._call_function = function
 
   def receive_event_result(self, **kwargs):
@@ -20,5 +23,5 @@ class EventWidget():
     # Function to be implemented by child classes to handle the results
     pass
 
-  def event_call(self, args):
-    self._call_function(self._config, args)
+  def event_call(self, args, index=0):
+    self._call_function(self._configs[index], args)

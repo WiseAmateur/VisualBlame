@@ -1,44 +1,44 @@
-from collections import namedtuple
 import pygit2
 
 from modules.modulebase import GitModuleBase
 
 
 class Log(GitModuleBase):
-  def __init__(self, amount=10, start_commit_id="HEAD", **kwargs):
+  def __init__(self, amount=10, commit_id="HEAD", **kwargs):
     super(Log, self).__init__(**kwargs)
     self.amount = amount
-    try:
-      self.start_commit_id = pygit2.Oid(hex=start_commit_id)
-    except ValueError:
-      self.start_commit_id = self._repo.head.target
+    self.commit_id = commit_id
 
-  # Input, amount of commits and start commit
-  # Output, commits for timeline, visualize as rectangles with date in middle?
-  # So output is log -> [commit ids]
-  # problem is, not guaranteed to be enough commits before/after go get target amount
-  # or just do simple and get commits after given one, if then not enough also take some from before
-  # but rather always before and after if possible
   def execute(self):
-    CommitInfo = namedtuple('CommitInfo', ['commit_hex', 'commit_date', 'commit_message'])
-    walker = self._repo.walk(self.start_commit_id, pygit2.GIT_SORT_TIME)
-    walker_rev = self._repo.walk(self.start_commit_id, pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_REVERSE)
+    walker = self._repo.walk(self._repo.head.target, pygit2.GIT_SORT_TIME)
 
-    log_data = []
+    log_data = [walker.next().hex]
 
-    while len(log_data) < self.amount:
+    if self.commit_id == "HEAD":
+      self.commit_id = log_data[0]
+
+    while True:
       try:
-        log_data.append(walker.next().hex)
+        commit_id = walker.next().hex
       except StopIteration:
+        walker = None
+        break
+      log_data.append(commit_id)
+
+      if commit_id == self.commit_id:
         break
 
-      # try:
-        # log_data.insert(0, walker_rev.next().hex)
-      # except StopIteration:
-        # pass
+    if walker:
+      for i in range(0, self.amount):
+        try:
+          log_data.append(walker.next().hex)
+        except StopIteration:
+          break
 
+    commit_index = log_data.index(self.commit_id)
+    if commit_index <= self.amount / 2:
+      result_data = log_data[0:self.amount]
+    else:
+      result_data = log_data[commit_index - self.amount / 2:commit_index + self.amount / 2]
 
-    # TODO IN COMMIT FUNCTIONALITY, ALLOW FOR MULTIPLE COMMIT INFO RETRIEVES AT ONCE (LIST INPUT OF IDS) SO THAT LESS THREADS ARE NEEDED IN CASES OF LOG COMMIT DETAILS.
-    # TODO instead of amount, do blame commit + 1 before and 1 after, and do diff commit + 1 before and 1 after. ( with something like ... in between if there is a gap which is likely)
-
-    super(Log, self).return_final_result({"commit_ids": log_data})
+    super(Log, self).return_final_result({"commit_id": result_data})
