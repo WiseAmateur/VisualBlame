@@ -1,7 +1,6 @@
 import kivy
 kivy.require('1.9.1')
 
-from kivy.uix.label import Label
 from kivy.lang import Builder
 from kivy.app import App
 
@@ -11,6 +10,7 @@ from gui.widgets.commitcontextview import CommitContextView
 from gui.widgets.initcommitcontextview import InitCommitContextView
 from gui.widgets.buttontabpanel import ButtonTabPanel
 from gui.widgets.diffbuttontabpanel import DiffButtonTabPanel
+from gui.widgets.blamebuttontabpanel import BlameButtonTabPanel
 from gui.widgets.codescrollview import CodeScrollView
 from gui.widgets.switchbutton import SwitchButton
 from gui.widgets.commitboxview import CommitBoxView
@@ -36,12 +36,6 @@ class VisualBlame(App):
 
     self._register_result_events()
     self._register_call_events()
-    # self._bind_widgets()
-
-    # TODO use a different method to let different widgets call each other
-    self.root.ids.diff_files.active_file = file_path_rel
-    self.root.ids.blame_history.active_file = file_path_rel
-    self.root.ids.blame_history.receive_event_result(data=[file_path_rel])
 
   # The register functions assume the event manager is set correctly
   # and the widget ids are correct

@@ -6,7 +6,7 @@ widget_event_listeners = {
   "diff_files": ResultConfig(event="diff", callers="blame_codelines_list"),
   "blame_commit_context": ResultConfig(event="commit_context", callers=["blame_commit_context", "diff_to_blame"]),
   "diff_commit_context": ResultConfig(event="commit_context", callers="blame_codelines_list"),
-  "log_commit_history": [ResultConfig(event="log", callers=["log_commit_history", "blame_codelines_list"]),
+  "log_commit_history": [ResultConfig(event="log", callers=["log_commit_history", "blame_codelines_list", "diff_to_blame"]),
                          ResultConfig(event="commit_context", callers=["log_commit_history", "diff_to_blame"])]
 }
 

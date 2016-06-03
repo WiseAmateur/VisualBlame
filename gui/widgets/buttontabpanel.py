@@ -54,14 +54,23 @@ class TabPanel(StackLayout):
 class ButtonTabPanel(ScrollView, EventWidget):
   effect_cls = ScrollEffect
   view_to_update = None
+  active_file = ""
 
   def __init__(self, **kwargs):
     super(ButtonTabPanel, self).__init__(**kwargs)
     self._init_tab_panel()
 
   def _init_tab_panel(self):
+    self._remove_tab_buttons()
     self.button_container = TabPanel(select_callback=self.update_list)
     self.add_widget(self.button_container)
+
+  def _remove_tab_buttons(self):
+    try:
+      self.remove_widget(self.button_container)
+    # The first time time there is no button container, catch the error
+    except AttributeError:
+      pass
 
   def process_event_result(self, data=[], **kwargs):
     # TODO find another way to do this, this data is most likely also in the cache..
@@ -69,11 +78,16 @@ class ButtonTabPanel(ScrollView, EventWidget):
     # print self.view_to_update
     file_names = [file_name for file_name in data]
 
+    self._init_tab_panel()
+
     self.button_container.add_buttons(file_names)
     try:
       self.button_container.select_button(file_names[::-1].index(self.active_file))
     except ValueError:
       pass
+
+  def update_active_file(self, active_file):
+    self.active_file = active_file
 
   def update_list(self, file_name):
     if self.view_to_update and file_name in self.data:
