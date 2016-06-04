@@ -43,8 +43,18 @@ class TabPanel(StackLayout):
     self.select_callback(text)
 
   def select_button(self, index):
-    if index < len(self.children):
-      self.children[index].on_press()
+    self.children[index].on_press()
+
+  def select_button_by_name(self, name):
+    names = [child.text for child in self.children]
+    try:
+      self.select_button(names.index(name))
+    # This can happen when the log results come in before the blame
+    # results in the GUI, meaning that the argument name could
+    # not have a corresponding child here (can happen if they both are
+    # finished so quickly that they are scheduled for the same frame)
+    except ValueError:
+      pass
 
   def deselect_buttons(self):
     for button in self.children:
@@ -81,13 +91,14 @@ class ButtonTabPanel(ScrollView, EventWidget):
     self._init_tab_panel()
 
     self.button_container.add_buttons(file_names)
-    try:
-      self.button_container.select_button(file_names[::-1].index(self.active_file))
-    except ValueError:
-      pass
+    self.select_actile_file()
+
+  def select_actile_file(self):
+    self.button_container.select_button_by_name(self.active_file)
 
   def update_active_file(self, active_file):
     self.active_file = active_file
+    self.select_actile_file()
 
   def update_list(self, file_name):
     if self.view_to_update and file_name in self.data:

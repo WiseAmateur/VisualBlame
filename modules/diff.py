@@ -27,7 +27,7 @@ class Diff(GitModuleBase):
       if not len(commit_file.hunks):
         continue
 
-      commit_file_path_rel = commit_file.delta.old_file.path
+      commit_file_path_rel = commit_file.delta.new_file.path
 
       commit_new_file_lines = self._get_patch_new_file_lines(commit_file)
 
