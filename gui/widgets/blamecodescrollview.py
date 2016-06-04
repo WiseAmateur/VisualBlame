@@ -36,18 +36,16 @@ class BlameCodeContainer(CodeContainer):
   def select_items(self, indices):
     self.deselect_items()
 
-    items_len = len(self.children)
-
-    # TODO check if this is actually error in the blame results.
-    # Make sure that all the to be selected lines are within the file bounds, in the case of deleted lines in the work dir
-    for i in range(len(indices) - 1, -1, -1):
-      if indices[i] < items_len:
-        indices = indices[:i+1]
-        break
-
     items_asc_order = self.children[::-1]
+
     for index in indices:
-      items_asc_order[index].select()
+      try:
+        items_asc_order[index-1].select()
+      # Can be out of bounds if the file has deleted lines in the
+      # working dir, the blame assumes the file is in the state of the
+      # corresponding commit. Then break, the indices should be sorted
+      except IndexError:
+        break
 
   def deselect_items(self):
     for list_item in self.children:
@@ -80,8 +78,4 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
       self.item_container.deselect_items()
 
   def process_event_result(self, **kwargs):
-    indices = []
-    for index in kwargs["data"]["lines"]:
-      indices.append(index-1)
-
-    self.item_container.select_items(indices)
+    self.item_container.select_items(kwargs["data"].lines)

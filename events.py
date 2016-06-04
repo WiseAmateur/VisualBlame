@@ -69,7 +69,7 @@ class EventManager():
         key = event.keys()[0]
         # print "orig event:", orig_event, "new event", key, "args", {call_config.result_args: data[call_config.result_args]}
         self._trigger_event(key, call_config._replace(events=event),
-                            {call_config.result_args: data[call_config.result_args]})
+                            {call_config.result_args: getattr(data, call_config.result_args)})
 
   def _trigger_event(self, event, call_config, data):
     try:

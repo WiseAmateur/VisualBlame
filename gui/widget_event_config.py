@@ -18,10 +18,7 @@ widget_event_triggers = {
                                                        {"log": []}]},
                                      caller="blame_codelines_list", result_args="commit_id"),
   "blame_commit_context": CallConfig(events="commit_context", caller="blame_commit_context"),
-  "log_commit_history": [CallConfig(events={"log": []},
-                                   caller="log_commit_history"),
-                         CallConfig(events={"commit_context": []},
-                                    caller="log_commit_history")],
-  "diff_to_blame": CallConfig(events={"log": []},
-                              caller="diff_to_blame")
+  "log_commit_history": [CallConfig(events="log", caller="log_commit_history"),
+                         CallConfig(events="commit_context", caller="log_commit_history")],
+  "diff_to_blame": CallConfig(events="log", caller="diff_to_blame")
 }
