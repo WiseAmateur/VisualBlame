@@ -5,12 +5,28 @@
   height: self.minimum_height
 
 <TabButton>:
-  shorten: True
-  shorten_from: 'left'
+  orientation: 'vertical'
   size_hint: (None, None)
   width: 200
-  height: 25
+  height: 50
+  background_color: 1, 1, 1, 1
+  selected_background_color: 0.2, 0.2, 0.2, 1
+  deselected_background_color: 0.6, 0.6, 0.6, 1
+
+  canvas:
+    Color:
+      rgba: self.background_color
+    BorderImage:
+      border: 16, 16, 16, 16
+      pos: self.pos
+      size: self.size
+      source: 'atlas://data/images/defaulttheme/button'
+
+<TabButtonLabel>:
+  shorten: True
+  shorten_from: 'left'
   text_size: (self.size[0], None)
   halign: 'center'
-  selected_background_color: [0.2, 0.2, 0.2, 1]
-  deselected_background_color: [0.6, 0.6, 0.6, 1]
+
+<DiffTabButtonLabel>:
+  markup: True

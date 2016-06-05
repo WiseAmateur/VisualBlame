@@ -30,6 +30,7 @@ class Diff(GitModuleBase):
       return
 
     diff_data = {}
+    FileDiff = namedtuple('FileDiff', ['hunks', 'stats'])
 
     for commit_file in diff:
       # TODO now exludes renamed but unmodified files, include later
@@ -40,8 +41,9 @@ class Diff(GitModuleBase):
       commit_file_path_rel = commit_file.delta.new_file.path
 
       commit_new_file_lines = self._get_patch_new_file_lines(commit_file)
+      hunks = self._create_diff_hunk_list(commit_new_file_lines, commit_file.hunks)
 
-      diff_data[commit_file_path_rel] = self._create_diff_hunk_list(commit_new_file_lines, commit_file.hunks)
+      diff_data[commit_file_path_rel] = FileDiff(hunks, commit_file.line_stats)
 
     super(Diff, self).return_cache_result(self.commit_id, diff_data)
     super(Diff, self).return_final_result(diff_data)

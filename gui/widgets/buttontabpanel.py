@@ -1,19 +1,27 @@
 from collections import namedtuple
 
+from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.stacklayout import StackLayout
 from kivy.effects.scroll import ScrollEffect
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.button import Button
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
 
 from gui.eventwidget import EventWidget
 
 
-class TabButton(Button):
+class TabButtonLabel(Label):
+  pass
+
+
+class TabButton(ButtonBehavior, BoxLayout):
   is_selected = False
 
-  def __init__(self, callback, **kwargs):
+  def __init__(self, callback, text="", **kwargs):
+    self.text = text
     self.callback = callback
     super(TabButton, self).__init__(**kwargs)
+    self.add_widget(TabButtonLabel(text=self.text))
 
   def on_press(self):
     if not self.is_selected:
@@ -34,7 +42,8 @@ class TabPanel(StackLayout):
     self.select_callback = select_callback
     super(TabPanel, self).__init__(**kwargs)
 
-  def add_buttons(self, button_names):
+  def add_buttons(self, button_data):
+    button_names = [file_name for file_name in button_data]
     for name in button_names:
       self.add_widget(TabButton(text=name, callback=self.item_select_callback))
 
@@ -63,6 +72,7 @@ class TabPanel(StackLayout):
 
 class ButtonTabPanel(ScrollView, EventWidget):
   effect_cls = ScrollEffect
+  panel_cls = TabPanel
   view_to_update = None
   active_file = ""
 
@@ -72,7 +82,7 @@ class ButtonTabPanel(ScrollView, EventWidget):
 
   def _init_tab_panel(self):
     self._remove_tab_buttons()
-    self.button_container = TabPanel(select_callback=self.update_list)
+    self.button_container = self.panel_cls(select_callback=self.update_list)
     self.add_widget(self.button_container)
 
   def _remove_tab_buttons(self):
@@ -86,11 +96,10 @@ class ButtonTabPanel(ScrollView, EventWidget):
     # TODO find another way to do this, this data is most likely also in the cache..
     self.data = data
     # print self.view_to_update
-    file_names = [file_name for file_name in data]
 
     self._init_tab_panel()
 
-    self.button_container.add_buttons(file_names)
+    self.button_container.add_buttons(data)
     self.select_actile_file()
 
   def select_actile_file(self):
@@ -102,5 +111,5 @@ class ButtonTabPanel(ScrollView, EventWidget):
 
   def update_list(self, file_name):
     if self.view_to_update and file_name in self.data:
-      self.view_to_update.init_code_view(data=self.data[file_name])
+      self.view_to_update.init_code_view(data=self.data[file_name].hunks)
       self.selected_file = file_name
