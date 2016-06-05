@@ -19,7 +19,7 @@ class Diff(GitModuleBase):
 
   def execute(self):
     try:
-      diff = self._repo.diff(str(self.commit_id) + "^", str(self.commit_id), context_lines=0, flags=pygit2.GIT_DIFF_INCLUDE_UNMODIFIED)
+      diff = self._repo.diff(str(self.commit_id) + "^", str(self.commit_id), context_lines=0)
       # Merge the diffs that are caused by a renamed file
       diff.find_similar()
     except KeyError:
@@ -30,7 +30,6 @@ class Diff(GitModuleBase):
       return
 
     diff_data = {}
-    FileDiff = namedtuple('FileDiff', ['hunks', 'stats'])
 
     for commit_file in diff:
       # TODO now exludes renamed but unmodified files, include later
@@ -43,7 +42,7 @@ class Diff(GitModuleBase):
       commit_new_file_lines = self._get_patch_new_file_lines(commit_file)
       hunks = self._create_diff_hunk_list(commit_new_file_lines, commit_file.hunks)
 
-      diff_data[commit_file_path_rel] = FileDiff(hunks, commit_file.line_stats)
+      diff_data[commit_file_path_rel] = self._init_file_diff(hunks, commit_file.line_stats)
 
     super(Diff, self).return_cache_result(self.commit_id, diff_data)
     super(Diff, self).return_final_result(diff_data)
@@ -121,6 +120,10 @@ class Diff(GitModuleBase):
     FileDiffHunk = namedtuple('FileDiffHunk', ['origin', 'lines'])
     return FileDiffHunk(hunk_type, lines)
 
+  def _init_file_diff(self, hunks, stats):
+    FileDiff = namedtuple('FileDiff', ['hunks', 'stats'])
+    return FileDiff(hunks, stats)
+
   def _get_first_commit_diff_data(self, first_commit_id):
     TreeData = namedtuple('TreeData', ['prepend', 'tree'])
     diff_data = {}
@@ -137,7 +140,7 @@ class Diff(GitModuleBase):
         if entry.type == "blob":
           blob = self._repo.get(str(entry.id))
           lines = blob.data.splitlines()
-          diff_data[prepend + entry.name] = [self._init_hunk("+", lines)]
+          diff_data[prepend + entry.name] = self._init_file_diff([self._init_hunk("+", lines)], (0, len(lines), 0))
         elif entry.type == "tree":
           prepend += entry.name
           trees.append(TreeData(prepend + entry.name + "/", self._repo.get(str(entry.id))))
