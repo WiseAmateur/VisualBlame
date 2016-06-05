@@ -40,8 +40,7 @@ class Log(GitModuleBase):
   def execute(self):
     # TODO add oldest_time to the tuple
     LogCommits = namedtuple("LogCommits", ["commit_ids"])
-    # TODO remove sort time, check if it was what caused the difference between my results and the git blame results
-    walker = self._repo.walk(self.start_commit_id, pygit2.GIT_SORT_TIME)
+    walker = self._repo.walk(self.start_commit_id)
 
     commit_obj = walker.next()
     log_data = LogCommits([commit_obj.hex])

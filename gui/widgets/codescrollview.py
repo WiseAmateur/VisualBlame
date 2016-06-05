@@ -1,5 +1,6 @@
 from collections import namedtuple
 
+from kivy.effects.scroll import ScrollEffect
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -21,6 +22,7 @@ class CodeContainer(GridLayout):
 
 
 class CodeScrollView(ScrollView):
+  effect_cls = ScrollEffect
   item_container_cls = CodeContainer
   line_item_cls = CodeListItem
 
