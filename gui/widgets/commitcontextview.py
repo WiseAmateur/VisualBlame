@@ -9,11 +9,8 @@ class CommitContextView(GridLayout, EventWidget, WidgetRecolorableBorder):
   switch = NumericProperty(0)
   border_color = [0.25, 0.5, 0.75]
 
-  def process_event_result(self, **kwargs):
-    if type(kwargs["data"]) is list:
-      data = kwargs["data"][0]
-    else:
-      data = kwargs["data"]
+  def process_event_result(self, data=None, **kwargs):
+    data = data[0]
 
     for widget_id, text in data.iteritems():
       if widget_id in self.ids:

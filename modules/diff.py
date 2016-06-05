@@ -9,6 +9,14 @@ class Diff(GitModuleBase):
     super(Diff, self).__init__(**kwargs)
     self.commit_id = kwargs["commit_id"]
 
+  def get_result_from_cache(self, data):
+    try:
+      return data[self.commit_id]
+    # TypeError if the data is None, KeyError if the data doesn't
+    # contain the key of this module
+    except (TypeError, KeyError):
+      return None
+
   def execute(self):
     try:
       diff = self._repo.diff(str(self.commit_id) + "^", str(self.commit_id), context_lines=0, flags=pygit2.GIT_DIFF_INCLUDE_UNMODIFIED)
@@ -16,7 +24,9 @@ class Diff(GitModuleBase):
       diff.find_similar()
     except KeyError:
       # First commit has no parent, manually get all the lines from that commit
-      super(Diff, self).return_final_result(self._get_first_commit_diff_data(self.commit_id))
+      first_commit_result = self._get_first_commit_diff_data(self.commit_id)
+      super(Diff, self).return_cache_result(self.commit_id, first_commit_result)
+      super(Diff, self).return_final_result(first_commit_result)
       return
 
     diff_data = {}
@@ -33,6 +43,7 @@ class Diff(GitModuleBase):
 
       diff_data[commit_file_path_rel] = self._create_diff_hunk_list(commit_new_file_lines, commit_file.hunks)
 
+    super(Diff, self).return_cache_result(self.commit_id, diff_data)
     super(Diff, self).return_final_result(diff_data)
 
   # From a list containing the lines of the new version of that file and

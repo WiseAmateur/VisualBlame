@@ -24,20 +24,20 @@ class CommitBoxView(BoxLayout, EventWidget):
     self.event_call("HEAD", 10)
 
   def event_call(self, commit_id, amount):
-    args = {"commit_id": commit_id, "amount": amount}
+    args = {"commit_id": commit_id}
     super(CommitBoxView, self).event_call(args)
 
-  def process_event_result(self, event, **kwargs):
+  def process_event_result(self, data, **kwargs):
     # Commit context result
-    if type(kwargs["data"]) is list:
+    if type(data) is list:
       self.clear_widgets()
-      for commit_data in kwargs["data"]:
+      for commit_data in data:
         self.add_widget(CommitBox(commit_hex=commit_data["id"], commit_date=commit_data["date"],
                                   commit_message=commit_data["message"]))
         self._update_active_commits()
     # Log result
     else:
-      args = {"commit_id": kwargs["data"]["commit_id"]}
+      args = {"commit_id": data.commit_ids}
       super(CommitBoxView, self).event_call(args, 1)
 
   def update_viewed_commit(self, active_commit, commit_id, color):

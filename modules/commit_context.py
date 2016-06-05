@@ -1,5 +1,4 @@
-from datetime import tzinfo, timedelta
-from datetime import datetime
+from datetime import tzinfo, timedelta, datetime
 
 from modules.modulebase import GitModuleBase
 
@@ -7,17 +6,32 @@ from modules.modulebase import GitModuleBase
 class CommitContext(GitModuleBase):
   def __init__(self, commit_id="HEAD", **kwargs):
     super(CommitContext, self).__init__(**kwargs)
-    self.commit_id = commit_id
+    if type(commit_id) is not list:
+      self.commit_ids = [commit_id]
+    else:
+      self.commit_ids = commit_id
+    self.cache_commit_ids = {}
+
+  def get_result_from_cache(self, data):
+    try:
+      for commit_id in self.commit_ids:
+        if commit_id in data:
+          self.cache_commit_ids[commit_id] = data[commit_id]
+    # TypeError if data is None
+    except TypeError:
+      return None
 
   def execute(self):
-    if type(self.commit_id) is list and len(self.commit_id):
-      data = []
-      for commit_id in self.commit_id:
-        data.append(self._get_commit_data(commit_id))
+    data = []
+    for commit_id in self.commit_ids:
+      try:
+        data.append(self.cache_commit_ids[commit_id])
+      except KeyError:
+        commit = self._get_commit_data(commit_id)
+        data.append(commit)
+        super(CommitContext, self).return_cache_result(commit["id"], commit)
 
-      super(CommitContext, self).return_final_result(data)
-    else:
-      super(CommitContext, self).return_final_result(self._get_commit_data(self.commit_id))
+    super(CommitContext, self).return_final_result(data)
 
   def _get_commit_data(self, commit_id):
     try:
@@ -34,7 +48,6 @@ class CommitContext(GitModuleBase):
     "author_email": commit.author.email, "committer_name": commit.committer.name,
     "committer_email": commit.committer.email, "message": commit.message,
     "date": timestr}
-
 
 
 class FixedOffset(tzinfo):

@@ -14,15 +14,21 @@ class Blame(GitModuleBase):
     self.file_path = file_path
     self.newest_commit = newest_commit
     self.line = line
+    self.key = file_path + newest_commit
+
+  def get_result_from_cache(self, data):
+    try:
+      return data[self.key][self.line-1]
+    # TypeError if the data is None, KeyError if the data doesn't
+    # contain the key of this module
+    except (TypeError, KeyError):
+      return None
 
   def execute(self):
-    if self._intermediate_data:
-      blame_lines = self._intermediate_data
-    else:
-      blame_lines = self._get_blame_lines()
-      super(Blame, self).return_intermediate_result(blame_lines)
+    blame_lines = self._get_blame_lines()
 
     try:
+      super(Blame, self).return_cache_result(self.key, blame_lines)
       super(Blame, self).return_final_result(blame_lines[self.line-1])
     except KeyError:
       logging.error("Blame: blame failed, selected line not found in results")

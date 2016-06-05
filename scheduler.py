@@ -1,7 +1,7 @@
 import threading
 import pygit2
 
-from cache import Cache
+from cache import EventCache
 
 
 # TODO implement keeping track of active thread and implement queue (need to be thought out more)
@@ -11,33 +11,30 @@ class Scheduler():
     self.repo = pygit2.Repository(git_dir)
     self.event_manager = event_manager
     self.events = events
-    self.cache = Cache()
+    self.cache = EventCache()
 
     for event in self.events:
       self.event_manager.register_for_call_event(event, self.call_git_module)
 
-  def call_git_module(self, config, event, cache_only, **args):
-    event_id = event
-    for arg in args.values():
-      event_id += str(arg)
+  def call_git_module(self, config, event, **args):
+    args["callback_cache"] = self.module_callback_cache
+    args["callback_result"] = self._trigger_result_event
+    args["repo"] = self.repo
+    args["config"] = config
+    args["event"] = event
+
+    git_module = self.events[event](**args)
+
+    result_data = git_module.get_result_from_cache(self.cache.get(event))
 
     # If the result of the command is not yet in the cache, compute it
-    if not self.cache.get(event_id):
-      args["intermediate_data"] = self.cache.get(event)
-      args["callback"] = self.module_callback
-      args["repo"] = self.repo
-      args["config"] = config
-      args["event_id"] = event_id
-      args["cache_only"] = cache_only
-
-      git_module = self.events[event](**args)
-
+    if result_data:
+      self._trigger_result_event(config, result_data)
+    else:
       thread = threading.Thread(target=git_module.execute, args=()).start()
-    elif not cache_only:
-      self.event_manager.trigger_result_event(config, self.cache.get(event_id))
 
-  def module_callback(self, cache_key, result_data, config=None, cache_only=False):
-    self.cache.store(cache_key, result_data)
+  def _trigger_result_event(self, config, data):
+    self.event_manager.trigger_result_event(config, data)
 
-    if not cache_only:
-      self.event_manager.trigger_result_event(config, result_data)
+  def module_callback_cache(self, event, key, result_data):
+    self.cache.store(event, key, result_data)

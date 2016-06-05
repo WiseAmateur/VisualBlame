@@ -14,3 +14,12 @@ class Cache():
       return self.cache[key]
     except KeyError:
       return self.default
+
+
+class EventCache(Cache):
+  def store(self, event, key, value):
+    try:
+      self.cache[event][key] = value
+    except KeyError:
+      self.cache[event] = {}
+      self.cache[event][key] = value
