@@ -1,3 +1,7 @@
+import time
+import psutil
+import os
+
 from kivy.properties import StringProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.graphics import Color, Rectangle
@@ -5,6 +9,14 @@ from kivy.app import App
 
 from gui.widgets.codescrollview import CodeScrollView, CodeContainer, CodeListItem
 from gui.eventwidget import EventWidget
+
+
+# source: http://fa.bianp.net/blog/2013/different-ways-to-get-memory-consumption-or-lessons-learned-from-memory_profiler/
+def memory_usage_psutil():
+  # return the memory usage in MB
+  process = psutil.Process(os.getpid())
+  mem = process.memory_info().rss / float(2 ** 20)
+  return mem
 
 
 class BlameCodeListItem(ButtonBehavior, CodeListItem):
@@ -17,6 +29,8 @@ class BlameCodeListItem(ButtonBehavior, CodeListItem):
 
   def on_press(self):
     if not self.is_selected:
+      print time.time()
+      print memory_usage_psutil()
       self.select()
     else:
       self.deselect()
@@ -81,3 +95,5 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
   def process_event_result(self, **kwargs):
     self.blame_path_rel = kwargs["data"].orig_path
     self.item_container.select_items(kwargs["data"].lines)
+    print time.time()
+    print memory_usage_psutil()
