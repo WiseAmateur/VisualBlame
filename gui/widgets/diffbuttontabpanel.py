@@ -3,6 +3,7 @@ from collections import namedtuple
 from kivy.uix.label import Label
 
 from gui.widgets.buttontabpanel import ButtonTabPanel, TabPanel, TabButton
+from gui.eventwidget import EventWidget
 
 
 class DiffTabButtonLabel(Label):
@@ -24,8 +25,18 @@ class DiffTabPanel(TabPanel):
       self.add_widget(DiffTabButton(text=name, stats=button_data[name].stats,
                                     callback=self.item_select_callback))
 
-class DiffButtonTabPanel(ButtonTabPanel):
+class DiffButtonTabPanel(ButtonTabPanel, EventWidget):
   panel_cls = DiffTabPanel
+
+  def process_event_result(self, data=[], **kwargs):
+    self.file_names = [name for name in data]
+    self._init_tab_panel(data)
+
+  def update_list(self, file_name):
+    if file_name in self.file_names:
+      self.selected_file = file_name
+      args = {"commit_id": self.commit_view.get_commit_id(), "file_path": file_name}
+      self.event_call(args)
 
   def get_data(self):
     BlameArgs = namedtuple("BlameArgs", ["file_path_rel", "newest_commit", "data"])

@@ -5,13 +5,17 @@ from modules.modulebase import GitModuleBase
 
 
 class Diff(GitModuleBase):
-  def __init__(self, **kwargs):
+  def __init__(self, file_path="", **kwargs):
     super(Diff, self).__init__(**kwargs)
     self.commit_id = kwargs["commit_id"]
+    self.file_path = file_path
 
   def get_result_from_cache(self, data):
     try:
-      return data[self.commit_id]
+      if self.file_path:
+        return data[self.commit_id][self.file_path]
+      else:
+        return data[self.commit_id]
     # TypeError if the data is None, KeyError if the data doesn't
     # contain the key of this module
     except (TypeError, KeyError):

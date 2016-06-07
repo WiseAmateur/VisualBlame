@@ -4,6 +4,7 @@ from events import ResultConfig, CallConfig
 widget_event_listeners = {
   "blame_codelines_list": ResultConfig(event="blame", callers="blame_codelines_list"),
   "diff_files": ResultConfig(event="diff", callers="blame_codelines_list"),
+  "diff_codelines_list": ResultConfig(event="diff", callers="diff_files"),
   "blame_commit_context": ResultConfig(event="commit_context", callers=["blame_commit_context", "diff_to_blame"]),
   "diff_commit_context": ResultConfig(event="commit_context", callers="blame_codelines_list"),
   "log_commit_history": [ResultConfig(event="log", callers=["log_commit_history", "blame_codelines_list", "diff_to_blame"]),
@@ -20,5 +21,6 @@ widget_event_triggers = {
   "blame_commit_context": CallConfig(events="commit_context", caller="blame_commit_context"),
   "log_commit_history": [CallConfig(events="log", caller="log_commit_history"),
                          CallConfig(events="commit_context", caller="log_commit_history")],
-  "diff_to_blame": CallConfig(events="log", caller="diff_to_blame")
+  "diff_to_blame": CallConfig(events="log", caller="diff_to_blame"),
+  "diff_files": CallConfig(events="diff", caller="diff_files")
 }

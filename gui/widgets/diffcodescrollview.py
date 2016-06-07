@@ -1,6 +1,7 @@
 from collections import namedtuple
 
 from gui.widgets.codescrollview import CodeScrollView, CodeListItem
+from gui.eventwidget import EventWidget
 
 
 class DiffCodeListItem(CodeListItem):
@@ -9,9 +10,12 @@ class DiffCodeListItem(CodeListItem):
     super(DiffCodeListItem, self).__init__(**kwargs)
 
 
-class DiffCodeScrollView(CodeScrollView):
+class DiffCodeScrollView(CodeScrollView, EventWidget):
   color_mapping = {"+": [0.5, 0.6, 0.25], "-": [0.6, 0.1, 0.1], " ": [0, 0, 0]}
   line_item_cls_colored = DiffCodeListItem
+
+  def process_event_result(self, data=[], **kwargs):
+    self.init_code_view(data=data.hunks)
 
   def _insert_line(self, **kwargs):
     if kwargs["bg_color"] != [0, 0, 0]:
