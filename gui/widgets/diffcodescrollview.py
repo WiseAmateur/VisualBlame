@@ -1,7 +1,16 @@
+import time, psutil, os
 from collections import namedtuple
 
 from gui.widgets.codescrollview import CodeScrollView, CodeListItem
 from gui.eventwidget import EventWidget
+
+
+# source: http://fa.bianp.net/blog/2013/different-ways-to-get-memory-consumption-or-lessons-learned-from-memory_profiler/
+def memory_usage_psutil():
+  # return the memory usage in MB
+  process = psutil.Process(os.getpid())
+  mem = process.memory_info().rss / float(2 ** 20)
+  return mem
 
 
 class DiffCodeListItem(CodeListItem):
@@ -16,6 +25,8 @@ class DiffCodeScrollView(CodeScrollView, EventWidget):
 
   def process_event_result(self, data=[], **kwargs):
     self.init_code_view(data=data.hunks)
+    print "time on diff lines result,", time.time()
+    print "mem on diff lines result,", memory_usage_psutil()
 
   def _insert_line(self, **kwargs):
     if kwargs["bg_color"] != [0, 0, 0]:

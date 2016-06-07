@@ -29,8 +29,8 @@ class BlameCodeListItem(ButtonBehavior, CodeListItem):
 
   def on_press(self):
     if not self.is_selected:
-      print time.time()
-      print memory_usage_psutil()
+      print "mem on blame line click,", memory_usage_psutil()
+      print "time on blame line click,", time.time()
       self.select()
     else:
       self.deselect()
@@ -95,5 +95,5 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
   def process_event_result(self, **kwargs):
     self.blame_path_rel = kwargs["data"].orig_path
     self.item_container.select_items(kwargs["data"].lines)
-    print time.time()
-    print memory_usage_psutil()
+    print "time on blame result,", time.time()
+    print "mem on blame result,", memory_usage_psutil()
