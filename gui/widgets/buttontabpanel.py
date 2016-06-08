@@ -83,7 +83,7 @@ class ButtonTabPanel(ScrollView):
 
   def _remove_tab_buttons(self):
     try:
-      self.remove_widget(self.button_container)
+      self.clear_widgets()
     # The first time time there is no button container, catch the error
     except AttributeError:
       pass

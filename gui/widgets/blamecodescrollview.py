@@ -71,6 +71,7 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
   line_item_cls = BlameCodeListItem
   file_path_rel = StringProperty()
   blame_path_rel = StringProperty()
+  commit_id = StringProperty()
 
   def init_code_view(self, file_path_rel="", newest_commit="", **kwargs):
     self.line_index = 0
@@ -93,6 +94,7 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
       self.item_container.deselect_items()
 
   def process_event_result(self, **kwargs):
+    self.commit_id = kwargs["data"].commit_id
     self.blame_path_rel = kwargs["data"].orig_path
     self.item_container.select_items(kwargs["data"].lines)
     print "time on blame result,", time.time()

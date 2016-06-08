@@ -42,7 +42,7 @@ class CodeScrollView(ScrollView):
   def _remove_all_lines(self):
     # The first time there is no item_container yet, catch that error
     try:
-      self.remove_widget(self.item_container)
+      self.clear_widgets()
     except AttributeError:
       pass
 

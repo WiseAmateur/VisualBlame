@@ -36,6 +36,7 @@ class DiffTabPanel(TabPanel):
 
 class DiffButtonTabPanel(ButtonTabPanel, EventWidget):
   panel_cls = DiffTabPanel
+  commit_id = ""
 
   def process_event_result(self, data=[], **kwargs):
     self.file_names = [name for name in data]
@@ -43,10 +44,13 @@ class DiffButtonTabPanel(ButtonTabPanel, EventWidget):
     print "time on diff result,", time.time()
     print "mem on diff result,", memory_usage_psutil()
 
+  def update_commit_id(self, commit_id):
+    self.commit_id = commit_id
+
   def update_list(self, file_name):
     if file_name in self.file_names:
       self.selected_file = file_name
-      args = {"commit_id": self.commit_view.get_commit_id(), "file_path": file_name}
+      args = {"commit_id": self.commit_id, "file_path": file_name}
       print "mem on diff lines start,", memory_usage_psutil()
       print "time on diff lines start,", time.time()
       self.event_call(args)

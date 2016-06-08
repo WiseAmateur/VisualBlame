@@ -34,6 +34,7 @@ BoxLayoutRecolorable:
       id: blame_codelines_list
       on_file_path_rel: blame_history.update_active_file(self.file_path_rel)
       on_blame_path_rel: diff_files.update_active_file(self.blame_path_rel)
+      on_commit_id: diff_files.update_commit_id(self.commit_id)
 
     SwitchButton:
       id: diff_to_blame
