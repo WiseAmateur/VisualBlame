@@ -67,7 +67,6 @@ class EventManager():
     if call_config == self.active_call_config:
       for event in call_config.events[orig_event]:
         key = event.keys()[0]
-        # print "orig event:", orig_event, "new event", key, "args", {call_config.result_args: data[call_config.result_args]}
         self._trigger_event(key, call_config._replace(events=event),
                             {call_config.result_args: getattr(data, call_config.result_args)})
 

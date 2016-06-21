@@ -19,6 +19,7 @@ class Log(GitModuleBase):
       return data[self.commit_id]
     except KeyError:
       return None
+      # TODO is this going to happen? could save some performance on big repo's with large history
       #pass
 
     # Find the best known commit to start from
@@ -38,18 +39,18 @@ class Log(GitModuleBase):
         # self.start_commit_id = commit_list[commit_index]
 
   def execute(self):
-    # TODO add oldest_time to the tuple
+    # TODO add oldest_time to the tuple if it is going to be implemented
     LogCommits = namedtuple("LogCommits", ["commit_ids"])
     walker = self._repo.walk(self.start_commit_id)
 
     commit_obj = walker.next()
     log_data = LogCommits([commit_obj.hex])
-    # print "time:", commit_obj.committer.time, "hex:", commit_obj.hex
 
     if self.commit_id == "HEAD":
       self.commit_id = log_data.commit_ids[0]
     else:
       while True:
+        # TODO is this even ever going to happen? find out.
         try:
           commit_id = walker.next().hex
         except StopIteration:

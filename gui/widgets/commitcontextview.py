@@ -7,14 +7,6 @@ from gui.eventwidget import EventWidget
 from gui.widgets.recolorablebg import WidgetRecolorableBorder
 
 
-# source: http://fa.bianp.net/blog/2013/different-ways-to-get-memory-consumption-or-lessons-learned-from-memory_profiler/
-def memory_usage_psutil():
-  # return the memory usage in MB
-  process = psutil.Process(os.getpid())
-  mem = process.memory_info().rss / float(2 ** 20)
-  return mem
-
-
 class CommitContextView(GridLayout, EventWidget, WidgetRecolorableBorder):
   switch = NumericProperty(0)
   border_color = [0.25, 0.5, 0.75]
@@ -26,9 +18,8 @@ class CommitContextView(GridLayout, EventWidget, WidgetRecolorableBorder):
       if widget_id in self.ids:
         self.ids[widget_id].text = text
 
-    print "time on commit context result,", time.time()
-    print "mem on commit context result,", memory_usage_psutil()
-
+    # TODO share the commit information in another way, the switch is
+    # not doing anything for the widget itself
     self.switch = 1 - self.switch
 
   def get_commit_id(self):

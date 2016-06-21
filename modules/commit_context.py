@@ -17,6 +17,17 @@ class CommitContext(GitModuleBase):
       for commit_id in self.commit_ids:
         if commit_id in data:
           self.cache_commit_ids[commit_id] = data[commit_id]
+
+      # TODO test this, but this should be added else the data from the cache is never returned without using a thread
+      if len(self.cache_commit_ids) == len(self.commit_ids):
+        data = []
+        for commit_id in self.commit_ids:
+          try:
+            data.append(self.cache_commit_ids[commit_id])
+          except KeyError:
+            return None
+
+        return data
     # TypeError if data is None
     except TypeError:
       return None

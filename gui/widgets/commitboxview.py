@@ -8,14 +8,6 @@ from gui.eventwidget import EventWidget
 from gui.widgets.recolorablebg import WidgetRecolorableBorder
 
 
-# source: http://fa.bianp.net/blog/2013/different-ways-to-get-memory-consumption-or-lessons-learned-from-memory_profiler/
-def memory_usage_psutil():
-  # return the memory usage in MB
-  process = psutil.Process(os.getpid())
-  mem = process.memory_info().rss / float(2 ** 20)
-  return mem
-
-
 class CommitBox(BoxLayout, WidgetRecolorableBorder):
   def __init__(self, commit_hex="", commit_date="", commit_message="",
                **kwargs):
@@ -45,8 +37,6 @@ class CommitBoxView(BoxLayout, EventWidget):
         self.add_widget(CommitBox(commit_hex=commit_data["id"], commit_date=commit_data["date"],
                                   commit_message=commit_data["message"]))
         self._update_active_commits()
-      print "time on log result,", time.time()
-      print "mem on log result,", memory_usage_psutil()
     # Log result
     else:
       args = {"commit_id": data.commit_ids}

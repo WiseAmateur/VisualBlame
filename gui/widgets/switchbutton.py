@@ -4,6 +4,8 @@ from kivy.uix.button import Button
 from gui.eventwidget import EventWidget
 
 
+# TODO instead of one generic switch button, just make two custom ones for the different functionalities..
+
 class SwitchButton(Button, EventWidget):
   # Get Diff file without removed lines. Get commit so you know when to start looking.
   def on_press(self):

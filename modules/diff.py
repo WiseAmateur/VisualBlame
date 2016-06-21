@@ -29,8 +29,7 @@ class Diff(GitModuleBase):
     except KeyError:
       # First commit has no parent, manually get all the lines from that commit
       first_commit_result = self._get_first_commit_diff_data(self.commit_id)
-      super(Diff, self).return_cache_result(self.commit_id, first_commit_result)
-      super(Diff, self).return_final_result(first_commit_result)
+      self._return_diff_result(first_commit_result)
       return
 
     diff_data = {}
@@ -48,8 +47,13 @@ class Diff(GitModuleBase):
 
       diff_data[commit_file_path_rel] = self._init_file_diff(hunks, commit_file.line_stats)
 
+    self._return_diff_result(diff_data)
+
+
+  def _return_diff_result(self, diff_data):
     super(Diff, self).return_cache_result(self.commit_id, diff_data)
     super(Diff, self).return_final_result(diff_data)
+
 
   # From a list containing the lines of the new version of that file and
   # a list of diff hunks of that file, create a new sorted list with

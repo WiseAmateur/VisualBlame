@@ -31,7 +31,15 @@ def read_file(file_path):
   with open(file_path) as f:
     return f.read().splitlines()
 
-
+#TODO remove this comment if not used
+# 1. Get input file path - 2. Get absolute file path - 3. Get pygit2
+# git dir using input file path. - 4. get file path rel to git dir path
+# - 5. Init event manager - 6. Init scheduler with event manager, pygit2
+# git dir and module config - 7. Get file contents using absolute path -
+# 8. Init GUI with file contents, rel file path, event manager, event
+# listen config and event trigger config
+# CONCLUSION - Too much stuff going on here, should ideally be limited
+# to handling input and initializing event manager/scheduler/gui
 if __name__ == '__main__':
   file_path = handle_argv()
   file_path_abs = path.abspath(file_path)

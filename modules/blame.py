@@ -27,6 +27,7 @@ class Blame(GitModuleBase):
   def execute(self):
     blame_lines = self._get_blame_lines()
 
+    # TODO this happens with untracked lines right? check and add comment if true
     try:
       super(Blame, self).return_cache_result(self.key, blame_lines)
       super(Blame, self).return_final_result(blame_lines[self.line-1])
@@ -53,7 +54,6 @@ class Blame(GitModuleBase):
       end_linenum = hunk.final_start_line_number + hunk.lines_in_hunk
       commit_id = str(hunk.final_commit_id)
 
-      # When/if switching to python3, use list() around this
       hunk_lines = range(start_linenum, end_linenum)
 
       try:

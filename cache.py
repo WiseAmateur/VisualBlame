@@ -3,9 +3,6 @@ class Cache():
     self.cache = {}
     self.default = None
 
-  def __len__(self):
-    return len(self.cache)
-
   def store(self, key, value):
     self.cache[key] = value
 
