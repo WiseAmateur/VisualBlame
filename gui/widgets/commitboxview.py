@@ -2,6 +2,9 @@ import time, psutil, os
 
 from collections import namedtuple
 
+from kivy.effects.scroll import ScrollEffect
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 
 from gui.eventwidget import EventWidget
@@ -18,7 +21,7 @@ class CommitBox(BoxLayout, WidgetRecolorableBorder):
     self.ids["commit_message"].text = commit_message
 
 
-class CommitBoxView(BoxLayout, EventWidget):
+class CommitBoxView(GridLayout, EventWidget):
   active_commits = {}
 
   def init_event_call(self, event_config, function):
@@ -53,3 +56,7 @@ class CommitBoxView(BoxLayout, EventWidget):
         if commit_box.commit_hex == active_commit.commit_id:
           commit_box.border_color = active_commit.color
           break
+
+
+class CommitBoxViewContainer(ScrollView):
+  effect_cls = ScrollEffect

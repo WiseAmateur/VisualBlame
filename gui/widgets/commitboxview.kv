@@ -1,6 +1,12 @@
 #:kivy 1.9.1
 
+<CommitBoxViewContainer>:
+  do_scroll_y: False
+
 <CommitBoxView>:
+  rows: 1
+  size_hint: (None, 1)
+  width: self.minimum_width
   spacing: 10
   padding: 5
 

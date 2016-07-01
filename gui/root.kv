@@ -9,10 +9,12 @@ BoxLayoutRecolorable:
   orientation: 'vertical'
   bg_color: 0.3, 0.3, 0.3
 
-  CommitBoxView:
-    size_hint: (None, None)
+  CommitBoxViewContainer:
+    size_hint: (1, None)
     height: 60
-    id: log_commit_history
+
+    CommitBoxView:
+      id: log_commit_history
 
   BoxLayout:
     size_hint: (1.0, None)
