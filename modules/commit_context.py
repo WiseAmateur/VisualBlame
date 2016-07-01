@@ -55,9 +55,9 @@ class CommitContext(GitModuleBase):
     dt = datetime.fromtimestamp(float(commit.author.time), time)
     timestr = dt.strftime('%x  %T  %z')
 
+    # TODO figure out what to do with the committer name/mail/date
     return {"id": commit.id.hex, "author_name": commit.author.name,
-    "author_email": commit.author.email, "committer_name": commit.committer.name,
-    "committer_email": commit.committer.email, "message": commit.message,
+    "author_email": commit.author.email, "message": commit.message,
     "date": timestr}
 
 

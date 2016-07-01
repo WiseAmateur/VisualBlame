@@ -1,13 +1,13 @@
 import time, psutil, os
 
-from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import NumericProperty
 
 from gui.eventwidget import EventWidget
 from gui.widgets.recolorablebg import WidgetRecolorableBorder
 
 
-class CommitContextView(GridLayout, EventWidget, WidgetRecolorableBorder):
+class CommitContextView(BoxLayout, EventWidget, WidgetRecolorableBorder):
   switch = NumericProperty(0)
   border_color = [0.25, 0.5, 0.75]
 
