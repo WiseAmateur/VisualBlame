@@ -48,3 +48,9 @@ class VisualBlame(App):
     for widget_id in self.widget_event_triggers:
       self.root.ids[widget_id].init_event_call(self.widget_event_triggers[widget_id],
                                              self.event_manager.trigger_call_event)
+
+  def get_view_by_id(self, view_id):
+    if view_id in self.root.ids:
+      return self.root.ids[view_id]
+
+    return None
