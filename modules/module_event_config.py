@@ -5,8 +5,8 @@ from modules.log import Log
 
 
 module_events = {
-  "blame": Blame,
-  "commit_context": CommitContext,
-  "diff": Diff,
-  "log": Log
+    "blame": Blame,
+    "commit_context": CommitContext,
+    "diff": Diff,
+    "log": Log
 }

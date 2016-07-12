@@ -4,20 +4,20 @@ from kivy.uix.label import Label
 
 
 class WidgetRecolorable(Widget):
-  pass
+    pass
 
 
 class WidgetRecolorableBorder(Widget):
-  pass
+    pass
 
 
 class BoxLayoutRecolorable(BoxLayout, WidgetRecolorable):
-  pass
+    pass
 
 
 class LabelRecolorable(Label, WidgetRecolorable):
-  pass
+    pass
 
 
 class LabelRecolorableBorder(Label, WidgetRecolorableBorder):
-  pass
+    pass
