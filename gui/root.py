@@ -36,6 +36,12 @@ class VisualBlame(App):
         self._register_result_events()
         self._register_call_events()
 
+    def get_view_by_id(self, view_id):
+        if view_id in self.root.ids:
+            return self.root.ids[view_id]
+
+        return None
+
     # The register functions assume the event manager is set correctly
     # and the widget ids are correct
     def _register_result_events(self):
@@ -53,9 +59,3 @@ class VisualBlame(App):
                 self.event_manager.trigger_call_event)
 
         self.widget_event_triggers = None
-
-    def get_view_by_id(self, view_id):
-        if view_id in self.root.ids:
-            return self.root.ids[view_id]
-
-        return None
