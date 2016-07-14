@@ -18,12 +18,6 @@ class CommitBox(BoxLayout, WidgetRecolorableBorder):
         self.ids["commit_date"].text = commit_date[:8]
         self.ids["commit_message"].text = commit_message
 
-    def set_active_color(self, color, prop):
-        if prop == "bg_color":
-            self.bg_color = color
-        elif prop == "border_color":
-            self.border_color = color
-
 
 class CommitBoxView(GridLayout, EventWidget):
     active_commits = {}
@@ -62,8 +56,8 @@ class CommitBoxView(GridLayout, EventWidget):
         for key, active_commit in self.active_commits.iteritems():
             for commit_box in self.children:
                 if commit_box.commit_hex == active_commit.commit_id:
-                    commit_box.set_active_color(active_commit.color,
-                                                active_commit.prop)
+                    setattr(commit_box, active_commit.prop,
+                            active_commit.color)
                     break
 
 
