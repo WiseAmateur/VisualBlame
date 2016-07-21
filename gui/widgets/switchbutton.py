@@ -37,7 +37,6 @@ class DiffCommitSwitchButton(SwitchButton, EventWidget):
             if scrollview_args:
                 self.switch_commit_context_views("diff_commit_context",
                                                  "blame_commit_context")
-                self.from_scrollview.remove_data()
                 self.to_scrollview.init_code_view(**scrollview_args._asdict())
                 args = {"amount": 10,
                         "commit_id": scrollview_args.newest_commit}

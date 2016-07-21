@@ -59,8 +59,3 @@ class DiffButtonTabPanel(ButtonTabPanel, EventWidget):
             return BlameArgs(file_name, newest_commit, lines)
 
         return None
-
-    def remove_data(self):
-        self._remove_tab_buttons()
-        self.view_to_update._remove_all_lines()
-        self.commit_view.empty_commit_context()
