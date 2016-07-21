@@ -36,3 +36,5 @@ class CommitContextView(BoxLayout, EventWidget, WidgetRecolorableBorder):
     def empty_commit_context(self):
         for widget_id in self.ids:
             self.ids[widget_id].text = ""
+
+        self.commit_id = ""

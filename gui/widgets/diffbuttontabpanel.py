@@ -55,8 +55,12 @@ class DiffButtonTabPanel(ButtonTabPanel, EventWidget):
         newest_commit = self.commit_view.get_commit_id()
         lines = self.view_to_update.get_lines()
 
+        if file_name and newest_commit and lines:
+            return BlameArgs(file_name, newest_commit, lines)
+
+        return None
+
+    def remove_data(self):
         self._remove_tab_buttons()
         self.view_to_update._remove_all_lines()
         self.commit_view.empty_commit_context()
-
-        return BlameArgs(file_name, newest_commit, lines)
