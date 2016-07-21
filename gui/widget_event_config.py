@@ -4,7 +4,8 @@ from events import ResultConfig, CallConfig
 widget_event_listeners = {
     "blame_codelines_list": ResultConfig(event="blame",
                                          callers="blame_codelines_list"),
-    "diff_files": ResultConfig(event="diff", callers="blame_codelines_list"),
+    "diff_files": ResultConfig(event="diff", callers=[
+        "blame_codelines_list", "blame_to_diff"]),
     "diff_codelines_list": ResultConfig(event="diff", callers="diff_files"),
     "blame_commit_context": ResultConfig(event="commit_context",
                                          callers=["blame_commit_context",
@@ -13,7 +14,8 @@ widget_event_listeners = {
                                         callers="blame_codelines_list"),
     "log_commit_history": [ResultConfig(
         event="log", callers=[
-            "log_commit_history", "blame_codelines_list", "diff_to_blame"]),
+            "log_commit_history", "blame_codelines_list", "diff_to_blame",
+            "blame_to_diff"]),
         ResultConfig(event="commit_context",
                      callers=["log_commit_history", "diff_to_blame"])]
 }
@@ -21,7 +23,6 @@ widget_event_listeners = {
 # You have to specify the caller to the widget id already entered as a
 # key. This is implemented this way so that the gui only has to pass the
 # eventconfig (resulting in less spots to change if eventconfig changes)
-# idea 1: use array voor multiple event configs/dicts
 widget_event_triggers = {
     "blame_codelines_list": CallConfig(
         events={"blame": [{"commit_context": []}, {"diff": []}, {"log": []}]},
@@ -32,5 +33,7 @@ widget_event_triggers = {
         events="log", caller="log_commit_history"),
         CallConfig(events="commit_context", caller="log_commit_history")],
     "diff_to_blame": CallConfig(events="log", caller="diff_to_blame"),
-    "diff_files": CallConfig(events="diff", caller="diff_files")
+    "diff_files": CallConfig(events="diff", caller="diff_files"),
+    "blame_to_diff": [CallConfig(events="diff", caller="blame_to_diff"),
+                      CallConfig(events="log", caller="blame_to_diff")]
 }

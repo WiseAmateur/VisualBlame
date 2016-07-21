@@ -51,7 +51,8 @@ class TabPanel(StackLayout):
         self.select_callback(text)
 
     def select_button(self, index):
-        self.children[index].on_press()
+        if index < len(self.children):
+            self.children[index].on_press()
 
     def select_button_by_name(self, name):
         names = [child.text for child in self.children]
@@ -62,7 +63,7 @@ class TabPanel(StackLayout):
         # not have a corresponding child here (can happen if they both are
         # finished so quickly that they are scheduled for the same frame)
         except ValueError:
-            pass
+            self.select_button(0)
 
     def deselect_buttons(self):
         for button in self.children:

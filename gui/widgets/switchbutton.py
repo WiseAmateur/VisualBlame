@@ -19,6 +19,11 @@ class BlameCommitSwitchButton(SwitchButton, EventWidget):
     def on_press(self):
         self.switch_commit_context_views("blame_commit_context",
                                          "diff_commit_context")
+        visualblame = App.get_running_app()
+        args = {"commit_id": visualblame.get_view_by_id(
+            "blame_commit_context").get_commit_id()}
+        self.event_call(args)
+        self.event_call(args, 1)
 
 
 # TODO instead of one generic switch button, just make two custom ones for the

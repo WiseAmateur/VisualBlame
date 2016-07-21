@@ -36,7 +36,6 @@ BoxLayoutRecolorable:
       id: blame_codelines_list
       on_file_path_rel: blame_history.update_active_file(self.file_path_rel)
       on_blame_path_rel: diff_files.update_active_file(self.blame_path_rel)
-      on_commit_id: diff_files.update_commit_id(self.commit_id)
 
     DiffCommitSwitchButton:
       id: diff_to_blame
@@ -57,6 +56,7 @@ BoxLayoutRecolorable:
       on_switch: log_commit_history.update_viewed_commit("blame", self.ids.id.text, [0.25, 0.75, 0.5], 'border_color')
 
     BlameCommitSwitchButton:
+      id: blame_to_diff
       text: ">"
       size_hint: (None, 1.0)
       width: 50
@@ -64,3 +64,4 @@ BoxLayoutRecolorable:
     CommitContextView:
       id: diff_commit_context
       on_switch: log_commit_history.update_viewed_commit("diff", self.ids.id.text, [0.25, 0.5, 0.75], 'bg_color')
+      on_commit_id: diff_files.update_commit_id(self.commit_id)
