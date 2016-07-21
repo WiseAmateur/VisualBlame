@@ -74,7 +74,7 @@ class Diff(GitModuleBase):
                 hunk_first_lineno = hunk.lines[0].new_lineno
             else:
                 hunk_first_lineno = hunk.lines[0].old_lineno +\
-                old_file_diff_counter
+                    old_file_diff_counter
 
             # Add a neutral line hunk if there are lines between the end of
             # the last hunk and the start of this hunk

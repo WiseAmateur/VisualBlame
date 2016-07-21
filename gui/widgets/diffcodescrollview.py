@@ -50,7 +50,7 @@ class DiffCodeScrollView(CodeScrollView, EventWidget):
         for i in range(len(list_data)):
             line = list_data[i]
             final_str_index = " " * (max_str_len - len(line.str_index)) +\
-            line.str_index + "    "
+                line.str_index + "    "
             list_data[i] = line._replace(str_index=final_str_index)
 
         return list_data

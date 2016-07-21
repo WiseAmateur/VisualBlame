@@ -15,7 +15,7 @@ class DiffTabButton(TabButton):
         super(DiffTabButton, self).__init__(**kwargs)
 
         text = str(stats[1]) + " [color=#809940]+[/color], " + str(stats[2]) +\
-        " [color=#991919]-[/color]"
+            " [color=#991919]-[/color]"
 
         self.add_widget(DiffTabButtonLabel(text=text))
 

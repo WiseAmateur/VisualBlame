@@ -60,7 +60,7 @@ class CodeScrollView(ScrollView):
             # length. Append spaces to every index to create space between the
             # index and line
             index_str = (max_str_len - len(index_str)) * " " + index_str +\
-            "    "
+                "    "
             lines[index] = FormattedLine(index_str, lines[index])
 
         return lines
