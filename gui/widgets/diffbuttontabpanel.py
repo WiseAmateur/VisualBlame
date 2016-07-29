@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 from kivy.uix.label import Label
 
 from gui.widgets.buttontabpanel import ButtonTabPanel, TabPanel, TabButton
@@ -33,6 +31,10 @@ class DiffButtonTabPanel(ButtonTabPanel, EventWidget):
     panel_cls = DiffTabPanel
     commit_id = ""
 
+    def __init__(self, **kwargs):
+        super(DiffButtonTabPanel, self).__init__(**kwargs)
+        self.item_select_callback = self.update_list
+
     def process_event_result(self, data=[], **kwargs):
         self.file_names = [name for name in data]
         self._init_tab_panel(data)
@@ -46,16 +48,11 @@ class DiffButtonTabPanel(ButtonTabPanel, EventWidget):
             args = {"commit_id": self.commit_id, "file_path": file_name}
             self.event_call(args)
 
-    # TODO find a better way to implement this functionality, now this view
-    # knows too much/is too coupled to the other views
     def get_data(self):
-        BlameArgs = namedtuple("BlameArgs",
-                               ["file_path_rel", "newest_commit", "data"])
         file_name = self.selected_file
         newest_commit = self.commit_view.get_commit_id()
-        lines = self.view_to_update.get_lines()
 
-        if file_name and newest_commit and lines:
-            return BlameArgs(file_name, newest_commit, lines)
+        if file_name and newest_commit:
+            return {"file_path": file_name, "commit_id": newest_commit}
 
         return None

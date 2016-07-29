@@ -54,12 +54,3 @@ class DiffCodeScrollView(CodeScrollView, EventWidget):
             list_data[i] = line._replace(str_index=final_str_index)
 
         return list_data
-
-    def get_lines(self):
-        items = self.item_container.children
-        result = []
-        for item in items[::-1]:
-            if item.ids.line_label.bg_color != self.color_mapping["-"]:
-                result.append(item.ids.line_label.text)
-
-        return result

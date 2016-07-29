@@ -30,9 +30,9 @@ class CommitFile(GitModuleBase):
             commit_tree = self._repo.revparse_single(self.commit_id).tree
 
         for path_name in self.file_path.split("/"):
-            commit_tree = commit_tree[path_name]
+            commit_tree = self._repo.get(commit_tree[path_name].id)
 
-        lines = self._repo.get(str(commit_tree.id)).data.splitlines()
+        lines = commit_tree.data.splitlines()
 
         result = CommitFileData(self.file_path, self.commit_id, lines)
 

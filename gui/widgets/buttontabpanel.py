@@ -46,9 +46,9 @@ class TabPanel(StackLayout):
             self.add_widget(TabButton(text=name,
                                       callback=self.item_select_callback))
 
-    def item_select_callback(self, text):
+    def item_select_callback(self, *args):
         self.deselect_buttons()
-        self.select_callback(text)
+        self.select_callback(*args)
 
     def select_button(self, index):
         if index < len(self.children):
@@ -63,7 +63,7 @@ class TabPanel(StackLayout):
         # not have a corresponding child here (can happen if they both are
         # finished so quickly that they are scheduled for the same frame)
         except ValueError:
-            self.select_button(0)
+            self.select_button(-1)
 
     def deselect_buttons(self):
         for button in self.children:
@@ -74,11 +74,12 @@ class ButtonTabPanel(ScrollView):
     effect_cls = ScrollEffect
     panel_cls = TabPanel
     active_file = ""
+    item_select_callback = None
 
     def _init_tab_panel(self, data=[]):
         self._remove_tab_buttons()
         self.button_container = self.panel_cls(
-            select_callback=self.update_list)
+            select_callback=self.item_select_callback)
         self.add_widget(self.button_container)
 
         self.button_container.add_buttons(data)
@@ -102,7 +103,3 @@ class ButtonTabPanel(ScrollView):
     def update_active_file(self, active_file):
         self.active_file = active_file
         self.select_active_file()
-
-    # To be implemented by the child classes
-    def update_list(self, file_name):
-        pass

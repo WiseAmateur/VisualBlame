@@ -1,4 +1,4 @@
-from pygit2 import discover_repository
+from pygit2 import discover_repository, Repository
 from argparse import ArgumentParser
 from os import path
 import logging
@@ -29,10 +29,6 @@ def handle_argv():
     return file_path
 
 
-def read_file(file_path):
-    with open(file_path) as f:
-        return f.read().splitlines()
-
 # TODO remove this comment if not used
 # 1. Get input file path - 2. Get absolute file path - 3. Get pygit2
 # git dir using input file path. - 4. get file path rel to git dir path
@@ -47,13 +43,14 @@ if __name__ == '__main__':
     file_path_abs = path.abspath(file_path)
     git_dir = discover_repository(file_path)
     file_path_rel = file_path_abs[len(git_dir) - 5:]
+    repo = Repository(git_dir)
+    head_commit_id = repo.revparse_single("HEAD").id.hex
 
     event_manager = EventManager()
-    scheduler = Scheduler(git_dir, event_manager, module_events)
+    scheduler = Scheduler(repo, event_manager, module_events)
 
-    data = read_file(file_path_abs)
-
-    gui = VisualBlame(data=data, file_path_rel=file_path_rel,
+    gui = VisualBlame(file_path_rel=file_path_rel,
+                      commit_id = head_commit_id,
                       event_manager=event_manager,
                       widget_event_listeners=widget_event_listeners,
                       widget_event_triggers=widget_event_triggers)

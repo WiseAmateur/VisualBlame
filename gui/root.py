@@ -17,24 +17,27 @@ kivy.require('1.9.1')
 
 class VisualBlame(App):
     def __init__(self, event_manager=None, widget_event_listeners=[],
-                 widget_event_triggers=[], **kwargs):
-        self.init_args = kwargs
+                 widget_event_triggers=[], file_path_rel="", commit_id=""):
+        self.init_file_path = file_path_rel
+        self.init_commit_id = commit_id
         self.event_manager = event_manager
+
         # Can't register the events here, as the widgets are not built yet
         self.widget_event_listeners = widget_event_listeners
         self.widget_event_triggers = widget_event_triggers
+
         super(VisualBlame, self).__init__()
 
     def build(self):
         self.root = Builder.load_file('gui/root.kv')
 
-        file_path_rel = self.init_args["file_path_rel"]
-
-        self.root.ids.blame_codelines_list.init_code_view(**self.init_args)
-        self.init_args = None
-
         self._register_result_events()
         self._register_call_events()
+
+        self.root.ids.blame_history.add_commit_file(self.init_file_path,
+                                                    self.init_commit_id)
+        self.init_file_path = None
+        self.init_commit_id = None
 
     def get_view_by_id(self, view_id):
         if view_id in self.root.ids:

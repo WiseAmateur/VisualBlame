@@ -26,20 +26,18 @@ class BlameCommitSwitchButton(SwitchButton, EventWidget):
         self.event_call(args, 1)
 
 
-# TODO instead of one generic switch button, just make two custom ones for the
-# different functionalities..
 class DiffCommitSwitchButton(SwitchButton, EventWidget):
     # Get Diff file without removed lines. Get commit so you know when to start
     # looking.
     def on_press(self):
         try:
-            scrollview_args = self.from_scrollview.get_data()
-            if scrollview_args:
+            blame_history_args = self.from_tabpanel.get_data()
+            if blame_history_args:
                 self.switch_commit_context_views("diff_commit_context",
                                                  "blame_commit_context")
-                self.to_scrollview.init_code_view(**scrollview_args._asdict())
+                self.to_tabpanel.add_commit_file(**blame_history_args)
                 args = {"amount": 10,
-                        "commit_id": scrollview_args.newest_commit}
+                        "commit_id": blame_history_args["commit_id"]}
                 self.event_call(args)
             else:
                 logging.warn("Switchbutton: diff data not set")

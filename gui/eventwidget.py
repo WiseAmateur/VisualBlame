@@ -9,6 +9,7 @@ class EventWidget():
             self._configs = [event_config]
         else:
             self._configs = event_config
+
         self._call_function = function
 
     def receive_event_result(self, **kwargs):

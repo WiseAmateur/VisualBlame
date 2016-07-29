@@ -8,8 +8,8 @@ from cache import EventCache
 # queue (need to be thought out more)
 # Handle module requests
 class Scheduler():
-    def __init__(self, git_dir, event_manager, events):
-        self.repo = pygit2.Repository(git_dir)
+    def __init__(self, repo, event_manager, events):
+        self.repo = repo
         self.event_manager = event_manager
         self.events = events
         self.cache = EventCache()
