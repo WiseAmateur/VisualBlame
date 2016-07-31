@@ -27,7 +27,8 @@ widget_event_listeners = {
 # key. This is implemented this way so that the gui only has to pass the
 # eventconfig (resulting in less spots to change if eventconfig changes)
 widget_event_triggers = {
-    "blame_history": [CallConfig(event="commit_file", caller="blame_history"),
+    "blame_history": [CallConfig(
+        event="commit_file", caller="blame_history"),
         CallConfig(event="commit_context", caller="blame_history"),
         CallConfig(event="log", caller="blame_history")],
     "blame_codelines_list": [CallConfig(

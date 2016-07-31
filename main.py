@@ -43,7 +43,7 @@ if __name__ == '__main__':
     scheduler = Scheduler(repo, event_manager, module_events)
 
     gui = VisualBlame(file_path_rel=file_path_rel,
-                      commit_id = head_commit_id,
+                      commit_id=head_commit_id,
                       event_manager=event_manager,
                       widget_event_listeners=widget_event_listeners,
                       widget_event_triggers=widget_event_triggers)

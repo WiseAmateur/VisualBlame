@@ -86,7 +86,7 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
             # Create a new copy of the lines, as those are stored in the cache
             self.init_code_view(file_path_rel=config.args["file_path"],
                                 newest_commit=config.args["commit_id"],
-                                data = list(data))
+                                data=list(data))
         # Blame result
         else:
             self.commit_id = data.commit_id
