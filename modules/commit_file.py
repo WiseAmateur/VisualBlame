@@ -1,5 +1,4 @@
 import pygit2
-from collections import namedtuple
 
 from modules.modulebase import GitModuleBase
 
@@ -20,9 +19,6 @@ class CommitFile(GitModuleBase):
             return None
 
     def execute(self):
-        CommitFileData = namedtuple("CommitFileData",
-                                    ["file_path", "commit_id", "lines"])
-
         try:
             commit_tree = self._repo.get(str(self.commit_id)).tree
         except ValueError:
@@ -34,7 +30,5 @@ class CommitFile(GitModuleBase):
 
         lines = commit_tree.data.splitlines()
 
-        result = CommitFileData(self.file_path, self.commit_id, lines)
-
-        super(CommitFile, self).return_cache_result(self.key, result)
-        super(CommitFile, self).return_final_result(result)
+        super(CommitFile, self).return_cache_result(self.key, lines)
+        super(CommitFile, self).return_final_result(lines)

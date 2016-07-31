@@ -24,7 +24,6 @@ class CommitBox(ButtonBehavior, BoxLayout, WidgetRecolorableBorder):
     def on_press(self):
         if self.callback:
             diff_files = App.get_running_app().get_view_by_id("diff_files")
-            diff_files.update_commit_id(self.commit_hex)
             self.callback(self.commit_hex, 0)
             self.callback(self.commit_hex, 2)
             self.callback(self.commit_hex, 3)

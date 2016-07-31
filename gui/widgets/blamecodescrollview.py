@@ -81,15 +81,21 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
         else:
             self.item_container.deselect_items()
 
-    def process_event_result(self, data=None, **kwargs):
-         # Commit file result
-        if type(data).__name__ == "CommitFileData":
+    def process_event_result(self, data=None, config=None, **kwargs):
+        # Commit file result
+        if type(data) is list:
             # Create a new copy of the lines, as those are stored in the cache
-            self.init_code_view(file_path_rel=data.file_path,
-                                newest_commit=data.commit_id,
-                                data = list(data.lines))
+            self.init_code_view(file_path_rel=config.args["file_path"],
+                                newest_commit=config.args["commit_id"],
+                                data = list(data))
         # Blame result
         else:
             self.commit_id = data.commit_id
             self.blame_path_rel = data.orig_path
             self.item_container.select_items(data.lines)
+
+            # Call the log, diff and commit_context events
+            args = {"commit_id": data.commit_id}
+            self.event_call(args, 1)
+            self.event_call(args, 2)
+            self.event_call(args, 3)

@@ -35,12 +35,10 @@ class DiffButtonTabPanel(ButtonTabPanel, EventWidget):
         super(DiffButtonTabPanel, self).__init__(**kwargs)
         self.item_select_callback = self.update_list
 
-    def process_event_result(self, data=[], **kwargs):
+    def process_event_result(self, data=[], config=None, **kwargs):
         self.file_names = [name for name in data]
+        self.commit_id = config.args["commit_id"]
         self._init_tab_panel(data)
-
-    def update_commit_id(self, commit_id):
-        self.commit_id = commit_id
 
     def update_list(self, file_name):
         if file_name in self.file_names:

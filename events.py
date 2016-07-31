@@ -12,20 +12,16 @@ class ResultConfig(namedtuple('ResultConfig', 'event callers')):
 
 
 # Call namedtuple, making sure the events are in a dict
-class CallConfig(namedtuple('CallConfig', 'events caller result_args')):
-    def __new__(cls, events, caller, result_args=""):
-        if isinstance(events, basestring):
-            events = {events: []}
-
-        return super(CallConfig, cls).__new__(cls, events, caller, result_args)
+class CallConfig(namedtuple('CallConfig', 'event caller args')):
+    def __new__(cls, event, caller, args={}):
+        return super(CallConfig, cls).__new__(cls, event, caller, args)
 
 
 # Class that allows for events to be registered and triggered
 class EventManager():
     def __init__(self):
         self._events = {}
-        self.active_call_config = None
-        self.result_append = "_result"
+        self.result_append = "_"
 
     def register_for_result_event(self, result_configs, function):
         if type(result_configs) is not list:
@@ -48,27 +44,16 @@ class EventManager():
             self._events[event] = [function]
 
     def trigger_call_event(self, call_config, args):
-        self.active_call_config = call_config
-
-        # Assumes the call config is valid
-        self._trigger_event(call_config.events.keys()[0], call_config, args)
+        # Assumes the call config is valid and adds the args to it
+        self._trigger_event(call_config.event, call_config._replace(args=args),
+                            args)
 
     def trigger_result_event(self, call_config, data):
         result = {"data": data}
 
-        orig_event = call_config.events.keys()[0]
-
         # Trigger result event
-        event = call_config.caller + orig_event + self.result_append
+        event = call_config.caller + call_config.event + self.result_append
         self._trigger_event(event, call_config, result)
-
-        # Trigger the additional events with the input of this result
-        if call_config == self.active_call_config:
-            for event in call_config.events[orig_event]:
-                key = event.keys()[0]
-                self._trigger_event(key, call_config._replace(events=event),
-                                    {call_config.result_args:
-                                     getattr(data, call_config.result_args)})
 
     def _trigger_event(self, event, call_config, data):
         try:

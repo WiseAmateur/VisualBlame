@@ -27,22 +27,24 @@ widget_event_listeners = {
 # key. This is implemented this way so that the gui only has to pass the
 # eventconfig (resulting in less spots to change if eventconfig changes)
 widget_event_triggers = {
-    "blame_history": [CallConfig(events="commit_file", caller="blame_history"),
-        CallConfig(events="commit_context", caller="blame_history"),
-        CallConfig(events="log", caller="blame_history")],
-    "blame_codelines_list": CallConfig(
-        events={"blame": [{"commit_context": []}, {"diff": []}, {"log": []}]},
-        caller="blame_codelines_list", result_args="commit_id"),
-    "blame_commit_context": CallConfig(events="commit_context",
+    "blame_history": [CallConfig(event="commit_file", caller="blame_history"),
+        CallConfig(event="commit_context", caller="blame_history"),
+        CallConfig(event="log", caller="blame_history")],
+    "blame_codelines_list": [CallConfig(
+        event="blame", caller="blame_codelines_list"),
+        CallConfig(event="commit_context", caller="blame_codelines_list"),
+        CallConfig(event="diff", caller="blame_codelines_list"),
+        CallConfig(event="log", caller="blame_codelines_list")],
+    "blame_commit_context": CallConfig(event="commit_context",
                                        caller="blame_commit_context"),
     "log_commit_history": [CallConfig(
-        events="log", caller="log_commit_history"),
-        CallConfig(events="commit_context", caller="log_commit_history"),
-        CallConfig(events="diff", caller="log_commit_box"),
-        CallConfig(events="commit_context", caller="log_commit_box")],
-    "diff_to_blame": CallConfig(events="log", caller="diff_to_blame"),
-    "diff_files": CallConfig(events="diff", caller="diff_files"),
-    "blame_to_diff": [CallConfig(events="diff", caller="blame_to_diff"),
-                      CallConfig(events="log", caller="blame_to_diff"),
-                      CallConfig(events="commit_file", caller="blame_to_diff")]
+        event="log", caller="log_commit_history"),
+        CallConfig(event="commit_context", caller="log_commit_history"),
+        CallConfig(event="diff", caller="log_commit_box"),
+        CallConfig(event="commit_context", caller="log_commit_box")],
+    "diff_to_blame": CallConfig(event="log", caller="diff_to_blame"),
+    "diff_files": CallConfig(event="diff", caller="diff_files"),
+    "blame_to_diff": [CallConfig(event="diff", caller="blame_to_diff"),
+                      CallConfig(event="log", caller="blame_to_diff"),
+                      CallConfig(event="commit_file", caller="blame_to_diff")]
 }
