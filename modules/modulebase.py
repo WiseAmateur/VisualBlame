@@ -4,7 +4,6 @@ class GitModuleBase(object):
         self._callback_result = kwargs["callback_result"]
         self._config = kwargs["config"]
         self._repo = kwargs["repo"]
-        self._event = kwargs["event"]
 
     # To be implemented by the child class
     def get_result_from_cache(self, data):
@@ -15,7 +14,7 @@ class GitModuleBase(object):
         pass
 
     def return_cache_result(self, key, data):
-        self._callback_cache(self._event, key, data)
+        self._callback_cache(self._config.event, key, data)
 
     def return_final_result(self, data):
         self._callback_result(self._config, data)

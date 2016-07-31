@@ -4,8 +4,6 @@ import pygit2
 from cache import EventCache
 
 
-# TODO implement keeping track of active thread and implement
-# queue (need to be thought out more)
 # Handle module requests
 class Scheduler():
     def __init__(self, repo, event_manager, events):
@@ -23,7 +21,6 @@ class Scheduler():
         args["callback_result"] = self._trigger_result_event
         args["repo"] = self.repo
         args["config"] = config
-        args["event"] = event
 
         git_module = self.events[event](**args)
 
