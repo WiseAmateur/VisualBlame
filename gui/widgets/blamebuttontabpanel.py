@@ -43,7 +43,6 @@ class BlameButtonTabPanel(ButtonTabPanel, EventWidget):
         CommitFile = namedtuple("CommitFile", ["file_path", "commit_id"])
         self.data = [CommitFile(file_path, commit_id)] + self.data
 
-        super(BlameButtonTabPanel, self).update_active_file(file_path)
         self._init_tab_panel(data=self.data)
 
     def update_list(self, file_path, commit_id):
