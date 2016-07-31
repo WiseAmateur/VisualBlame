@@ -82,8 +82,7 @@ class BlameCodeScrollView(CodeScrollView, EventWidget):
             self.item_container.deselect_items()
 
     def process_event_result(self, data=None, config=None, **kwargs):
-        # Commit file result
-        if type(data) is list:
+        if config.event == "commit_file":
             # Create a new copy of the lines, as those are stored in the cache
             self.init_code_view(file_path_rel=config.args["file_path"],
                                 newest_commit=config.args["commit_id"],

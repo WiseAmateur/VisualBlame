@@ -40,9 +40,8 @@ class CommitBoxView(GridLayout, EventWidget):
         args = {"commit_id": commit_id}
         super(CommitBoxView, self).event_call(args, config_num)
 
-    def process_event_result(self, data, **kwargs):
-        # Commit context result
-        if type(data) is list:
+    def process_event_result(self, data, config, **kwargs):
+        if config.event == "commit_context":
             self.clear_widgets()
             for commit_data in data:
                 self.add_widget(CommitBox(
@@ -53,7 +52,7 @@ class CommitBoxView(GridLayout, EventWidget):
                 self._update_active_commits()
         # Log result
         else:
-            self.event_call(data.commit_ids, 1)
+            self.event_call(data, 1)
 
     def update_viewed_commit(self, active_commit, commit_id, color, prop):
         ActiveCommit = namedtuple('ActiveCommit',

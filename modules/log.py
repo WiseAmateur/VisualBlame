@@ -1,6 +1,4 @@
 import pygit2
-from collections import namedtuple
-
 from modules.modulebase import GitModuleBase
 
 
@@ -21,24 +19,18 @@ class Log(GitModuleBase):
             return None
 
     def execute(self):
-        LogCommits = namedtuple("LogCommits", ["commit_ids"])
         walker = self._repo.walk(self.start_commit_id)
 
         commit_obj = walker.next()
-        log_data = LogCommits([commit_obj.hex])
+        log_data = [commit_obj.hex]
 
         if self.commit_id == "HEAD":
-            self.commit_id = log_data.commit_ids[0]
+            self.commit_id = log_data[0]
         else:
             while True:
-                # TODO is this even ever going to happen? find out.
-                try:
-                    commit_id = walker.next().hex
-                except StopIteration:
-                    walker = None
-                    break
+                commit_id = walker.next().hex
 
-                log_data.commit_ids.append(commit_id)
+                log_data.append(commit_id)
 
                 if commit_id == self.commit_id:
                     break
@@ -46,14 +38,13 @@ class Log(GitModuleBase):
         if walker:
             for i in range(0, self.amount):
                 try:
-                    log_data.commit_ids.append(walker.next().hex)
+                    log_data.append(walker.next().hex)
                 except StopIteration:
                     break
 
-        commit_index = log_data.commit_ids.index(self.commit_id)
+        commit_index = log_data.index(self.commit_id)
         result_data = self._reduce_log_result_to_amount(commit_index,
-                                                        log_data.commit_ids)
-        result_data = LogCommits(result_data)
+                                                        log_data)
 
         super(Log, self).return_cache_result(self.commit_id, result_data)
         super(Log, self).return_final_result(result_data)
