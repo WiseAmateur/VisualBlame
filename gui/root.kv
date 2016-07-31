@@ -53,7 +53,7 @@ BoxLayoutRecolorable:
 
     InitCommitContextView:
       id: blame_commit_context
-      on_switch: log_commit_history.update_viewed_commit("blame", self.ids.id.text, [0.25, 0.75, 0.5], 'border_color')
+      on_commit_id: log_commit_history.update_viewed_commit("blame", self.commit_id, [0.25, 0.75, 0.5], 'border_color')
 
     BlameCommitSwitchButton:
       id: blame_to_diff
@@ -63,5 +63,5 @@ BoxLayoutRecolorable:
 
     CommitContextView:
       id: diff_commit_context
-      on_switch: log_commit_history.update_viewed_commit("diff", self.ids.id.text, [0.25, 0.5, 0.75], 'bg_color')
+      on_commit_id: log_commit_history.update_viewed_commit("diff", self.ids.id.text, [0.25, 0.5, 0.75], 'bg_color')
       on_commit_id: diff_files.update_commit_id(self.commit_id)

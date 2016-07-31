@@ -1,12 +1,11 @@
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import NumericProperty, StringProperty
+from kivy.properties import StringProperty
 
 from gui.eventwidget import EventWidget
 from gui.widgets.recolorablebg import WidgetRecolorableBorder
 
 
 class CommitContextView(BoxLayout, EventWidget, WidgetRecolorableBorder):
-    switch = NumericProperty(0)
     border_color = [0.25, 0.5, 0.75]
     commit_id = StringProperty()
 
@@ -18,10 +17,6 @@ class CommitContextView(BoxLayout, EventWidget, WidgetRecolorableBorder):
                 self.ids[widget_id].text = text
 
         self.commit_id = self.ids["id"].text
-
-        # TODO share the commit information in another way, the switch is
-        # not doing anything for the widget itself
-        self.switch = 1 - self.switch
 
     def get_commit_id(self):
         return self.commit_id
