@@ -21,7 +21,6 @@ class Log(GitModuleBase):
             return None
 
     def execute(self):
-        # TODO add oldest_time to the tuple if it is going to be implemented
         LogCommits = namedtuple("LogCommits", ["commit_ids"])
         walker = self._repo.walk(self.start_commit_id)
 

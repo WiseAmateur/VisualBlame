@@ -6,7 +6,6 @@ from gui.widgets.recolorablebg import WidgetRecolorableBorder
 
 
 class CommitContextView(BoxLayout, EventWidget, WidgetRecolorableBorder):
-    border_color = [0.25, 0.5, 0.75]
     commit_id = StringProperty()
 
     def process_event_result(self, data=None, **kwargs):

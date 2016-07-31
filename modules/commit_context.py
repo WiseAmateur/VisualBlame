@@ -18,15 +18,11 @@ class CommitContext(GitModuleBase):
                 if commit_id in data:
                     self.cache_commit_ids[commit_id] = data[commit_id]
 
-            # TODO test this, but this should be added else the data
-            # from the cache is never returned without using a thread
+            # If all commit ids are in the cache, return them
             if len(self.cache_commit_ids) == len(self.commit_ids):
                 data = []
                 for commit_id in self.commit_ids:
-                    try:
-                        data.append(self.cache_commit_ids[commit_id])
-                    except KeyError:
-                        return None
+                    data.append(self.cache_commit_ids[commit_id])
 
                 return data
         # TypeError if data is None
@@ -35,6 +31,7 @@ class CommitContext(GitModuleBase):
 
     def execute(self):
         data = []
+        # Get the data from the cache per id if it is there, else retrieve it
         for commit_id in self.commit_ids:
             try:
                 data.append(self.cache_commit_ids[commit_id])
@@ -57,7 +54,6 @@ class CommitContext(GitModuleBase):
         dt = datetime.fromtimestamp(float(commit.author.time), time)
         timestr = dt.strftime('%x    %T    %z')
 
-        # TODO figure out what to do with the committer name/mail/date
         return {"id": commit.id.hex, "author_name": commit.author.name,
                 "author_email": commit.author.email, "message": commit.message,
                 "date": timestr}

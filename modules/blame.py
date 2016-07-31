@@ -27,14 +27,8 @@ class Blame(GitModuleBase):
     def execute(self):
         blame_lines = self._get_blame_lines()
 
-        # TODO this happens with untracked lines right? check and add
-        # comment if true
-        try:
-            super(Blame, self).return_cache_result(self.key, blame_lines)
-            super(Blame, self).return_final_result(blame_lines[self.line-1])
-        except KeyError:
-            logging.error("Blame: blame failed, selected line not found in\
-                          results")
+        super(Blame, self).return_cache_result(self.key, blame_lines)
+        super(Blame, self).return_final_result(blame_lines[self.line-1])
 
     def _get_blame_lines(self):
         BlameLines = namedtuple("BlameLines",

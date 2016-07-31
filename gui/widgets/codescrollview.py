@@ -52,8 +52,6 @@ class CodeScrollView(ScrollView):
         max_index = len(lines)
         max_str_len = len(str(max_index))
 
-        # TODO put this in separate function that has the max index as arg,
-        # so that it can be used by the diffcodescrollview too?
         for index in range(max_index):
             index_str = str(index+1)
             # Prepend spaces if necessary so that every index has the same str
