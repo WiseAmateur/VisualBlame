@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from os import path
 import logging
 import sys
+import os
 
 from scheduler import Scheduler
 from gui.root import VisualBlame
@@ -33,7 +34,7 @@ def handle_argv():
 if __name__ == '__main__':
     file_path = handle_argv()
     file_path_abs = path.abspath(file_path)
-    git_dir = discover_repository(file_path)
+    git_dir = discover_repository(file_path, True)
     file_path_rel = file_path_abs[len(git_dir) - 5:]
 
     repo = Repository(git_dir)
