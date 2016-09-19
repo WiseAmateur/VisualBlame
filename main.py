@@ -3,7 +3,6 @@ from argparse import ArgumentParser
 from os import path
 import logging
 import sys
-import os
 
 from scheduler import Scheduler
 from gui.root import VisualBlame
