@@ -10,7 +10,7 @@ VisualBlame is a GUI that was created as part of my Bachelor's thesis. This thes
 ### Linux
 VisualBlame has 2 main dependencies that have to be installed in order to run it. These are listed below with the websites where their installation instructions can be found:
 
-- [pygit2](www.pygit2.org/install.html) (last tested version: 0.24.1)
+- [pygit2](http://www.pygit2.org/install.html) (last tested version: 0.24.1)
 - [kivy](https://kivy.org/docs/installation/installation.html) (last tested version: 1.9.1)
 
 ### Other operating systems
